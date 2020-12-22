@@ -27,7 +27,7 @@
 	 		<if test="pwd_question_one_key!=null">pwd_question_one_key,</if>
 	 		<if test="pwd_question_two_key!=null">pwd_question_two_key,</if>
 	 	</trim>
-	 	 values(
+	 	 values(#{pwd_username},#{pwd_password},#{pwd_power},#{pwd_regist_data},
 	 	<trim suffix=")" suffixOverrides=",">
 	 		<if test="pwd_question_one!=null">#{pwd_question_one},</if>
 	 		<if test="pwd_question_two!=null">#{pwd_question_two},</if>
@@ -75,7 +75,7 @@
 	 	select * from user where user_pasid=#{pas_id}
 	 </select>
 	 <select id="queryByEmployee" parameterType="int" resultType="com.j.pojo.Employee">
-	 	select * from Employee where user_pasid=#{pas_id}
+	 	select * from Employee where emp_pasid=#{pas_id}
 	 </select>
 	 
 	 
@@ -109,6 +109,15 @@
 	 </select>
 	 <select id="queryUseFuByName" parameterType="String" resultType="com.j.pojo.User">
 	 	select * from User where emp_name like #{user_name}
+	 </select>
+	 
+	 	<!-- 密码ID查询用户信息 -->
+	 <select id="queryUserByPwdId" parameterType="int" resultType="com.j.pojo.User">
+	 	select * from User where user_pasid =#{user_pasid}
+	 </select>
+	 	<!-- 部门信息查询 -->
+	 <select id="queryDepByPower" parameterType="String" resultType="com.j.pojo.Department">
+	 	select * from Department where dep_power=#{power}
 	 </select>
 	 
 <!-- 改 -->

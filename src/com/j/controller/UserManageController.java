@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
+import com.j.pojo.Employee;
 import com.j.pojo.PasswordTable;
 import com.j.pojo.User;
 import com.j.service.UserManageService;
@@ -28,8 +29,7 @@ public class UserManageController {
 //	跳转登录界面
 	@RequestMapping(value="/login.action",method=RequestMethod.GET)
 	public String log(HttpServletRequest request) {
-		System.out.println("jajajjajajajajajj");
-		request.setAttribute("list", "哈哈哈哈哈哈");
+		System.out.println("正在跳转登录界面");
 		return "login";
 	}
 	
@@ -39,7 +39,6 @@ public class UserManageController {
 	public String login(HttpSession session,String username,String password) {
 		System.out.println(username);
 		System.out.println(password);
-//		boolean b = userService.queryByNameAndPassword(username, password);
 		Map<String, Object> map2 = userManageService.queryByUsernameAndPassword(username, password);
 		System.out.println("Controller返回值："+map2.get("flag"));
 		System.out.println("Controller返回值："+map2.get("flag").equals(false));
@@ -50,6 +49,14 @@ public class UserManageController {
 			session.setAttribute("USER_SESSION", map2.get("userID")+"-"+username);
 			map.put("flag", map2.get("flag"));
 			map.put("userId", session.getId());
+			System.out.println(map2.get("power"));
+			if(map2.get("power").equals(10)) {
+				map.put("user","普通用户登录");
+				map.put("power",map2.get("power"));
+			}else {
+				map.put("user","员工登录");
+				map.put("power",map2.get("power"));
+			}
 			return JSON.toJSONString(map);
 		}else {
 			//return "login";
@@ -83,15 +90,27 @@ public class UserManageController {
 	}
 		//注册插入数据
 	@ResponseBody
-	@RequestMapping(value="/insertByRegist.action")
+	@RequestMapping(value="/insertByRegist.action",method=RequestMethod.POST)
 						// 名字，			性别，		权限(邀请码权限)，身份证号，		电话，		地址 ，		登录昵称，			密码				密保1				密保2					密保1答案					密保2答案
 	public String regist(String name,String gender,String power,String uid,String tel,String address,String username,String password,String question_one,String question_two,String question_one_key,String question_two_key) {
+		System.out.println(name);
+		System.out.println(gender);
+		System.out.println(power);
+		System.out.println(uid);
+		System.out.println(tel);
+		System.out.println(address);
+		System.out.println(username);
+		System.out.println(password);
+		System.out.println(question_one);
+		System.out.println(question_two);
+		System.out.println(question_one_key);
+		System.out.println(question_two_key);
 		Map<String,Object> map = new HashMap<String , Object>();
 		PasswordTable pwd = new PasswordTable();
 		pwd.setPwd_username(username);
 		pwd.setPwd_password(password);
 		//注册日期
-		//权限
+		pwd.setPwd_power(Integer.valueOf(power));
 		pwd.setPwd_question_one(question_one);
 		pwd.setPwd_question_two(question_two);
 		pwd.setPwd_question_one_key(question_one_key);
@@ -113,15 +132,24 @@ public class UserManageController {
 			}else {
 				map.put("flag", false);
 			}
+			return JSON.toJSONString(map);
 		}else {
-			System.out.println("员工开始注册");
+			Employee employee = new Employee();
+			employee.setEmp_name(name);
+			employee.setEmp_gender(gender);
+			employee.setEmp_userid(uid);
+			employee.setEmp_phone_number(tel);
+			employee.setEmp_address(address);
+			employee.setEmp_depid(Integer.valueOf(power));
+			int insertEmployeeRegist = userManageService.insertEmployeeRegist(pwd, employee);
+			System.out.println("Controller普通用户注册返回值："+insertEmployeeRegist);
+			if(insertEmployeeRegist>0) {
+				map.put("flag", true);
+			}else {
+				map.put("flag", false);
+			}
+			return JSON.toJSONString(map);
 		}
-
-		
-		
-		
-		
-		return null;
 	}
 	//员工注册
 		//邀请码查询

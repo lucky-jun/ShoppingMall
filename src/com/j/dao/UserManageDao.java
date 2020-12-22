@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.j.pojo.Department;
 import com.j.pojo.Employee;
 import com.j.pojo.InvitationCode;
 import com.j.pojo.PasswordTable;
 import com.j.pojo.User;
+
 
 public interface UserManageDao {
 //增
@@ -15,7 +17,7 @@ public interface UserManageDao {
 		//普通用户信息插入
 	public int insertByPasswordTable(PasswordTable pawT);
 	public int insertByUser(User user);
-	public int insertByMember(String user_id);
+	public int insertByMember(int user_id);
 		//员工信息插入
 	public int insertByEmployee(Employee employee);
 //删
@@ -41,6 +43,13 @@ public interface UserManageDao {
 	//按名字模糊查询
 	public List<Employee> queryEmpFuByName(@Param("emp_name")String emp_name);
 	public List<User> queryUseFuByName(@Param("user_name")String user_name);
+	
+	//密码ID查询用户信息
+	public User queryUserByPwdId(@Param("user_pasid")int id);
+	//部门信息查询
+	public Department queryDepByPower(@Param("power")String power);
+	
+	
 //改
 	
 }
