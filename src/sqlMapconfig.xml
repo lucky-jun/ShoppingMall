@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!--引入外部属性文件,给pojo包下实体类别名,不区分大小写 -->
+	<typeAliases>
+		<package name="com.j.pojo"/>
+	</typeAliases>
+</configuration>

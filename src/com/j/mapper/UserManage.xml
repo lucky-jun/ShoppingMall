@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 校验规则 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.j.dao.UserManageDao">
+		<!-- 第一种：在dao中添加注解@Param(这里是需要的别名)
+		   第二种：默认的方式arg0，arg1.....	
+	 -->
+<!-- 增 -->
+	 <insert id="insertByPasswordTable" parameterType="com.j.pojo.PasswordTable">
+	 	insert into PasswordTable(pwd_username,pwd_password,pwd_power,pwd_regist_data,pwd_question_one,pwd_question_two,pwd_question_one_key,pwd_question_two_key)
+	 	 values(#{pwd_username},#{pwd_password},#{pwd_power},#{pwd_regist_data},#{pwd_question_one},#{pwd_question_two},#{pwd_question_one_key},#{pwd_question_two_key})
+	 </insert>
+	 <insert id="insertByUser" parameterType="com.j.pojo.User">
+	 	insert into User(user_name,user_gender,user_uid,user_phone_number,user_address,user_pasid)
+	 	 values(#{user_name},#{user_gender},#{user_uid},#{user_phone_number},#{user_address},#{user_pasid})
+	 </insert>
+	 <insert id="insertByEmployee" parameterType="com.j.pojo.Employee">
+	 	insert into Employee(emp_name,emp_gender,emp_depid,emp_userid,emp_phone_number,emp_address,emp_pasid)
+	 	 values(#{emp_name},#{emp_gender},#{emp_depid},#{emp_userid},#{emp_phone_number},#{emp_address},#{emp_pasid})
+	 </insert>
+<!-- 删 -->
+	 
+	 
+<!-- 查 -->
+	 <!-- 登录查询 -->
+	 <select id="queryByUsernameAndPassword" parameterType="String" resultType="com.j.pojo.PasswordTable">
+	 	select * from passwordtable where pwd_username=#{username} and pwd_password=#{password}
+	 </select>
+	 <select id="queryByUser" parameterType="int" resultType="com.j.pojo.User">
+	 	select * from user where user_pasid=#{pas_id}
+	 </select>
+	 <select id="queryByEmployee" parameterType="int" resultType="com.j.pojo.Employee">
+	 	select * from Employee where user_pasid=#{pas_id}
+	 </select>
+	 
+	 
+	 <!-- 注册查询 -->
+	 	<!-- 普通用户注册 -->
+	 		<!-- 注册重名查询 -->
+	 <select id="queryRegistByUsername" parameterType="String" resultType="int">
+	 	select count(*) from PasswordTable where pwd_username=#{username}
+	 </select>
+	 		<!-- 身份证号查询 -->
+	 <select id="queryRegistByuserID" parameterType="String" resultType="int">
+	 	select count(*) from user where user_uid=#{user_uid}
+	 </select>
+	 	<!-- 员工注册 -->
+	 		<!-- 邀请码查询 -->
+	 <select id="queryByInvitationCode" parameterType="String" resultType="com.j.pojo.InvitationCode">
+	 	select * from InvitationCode where inv_code=#{code}
+	 </select>
+	 
+	 <!-- 信息查询 -->
+	 	<!-- 查询全部 -->
+	 <select id="queryEmpAll" resultType="com.j.pojo.Employee">
+	 	select * from Employee
+	 </select>
+	 <select id="queryUseAll" resultType="com.j.pojo.User">
+	 	select * from User
+	 </select>
+	 	<!-- 按名字模糊查询 -->
+	 <select id="queryEmpFuByName" parameterType="String" resultType="com.j.pojo.Employee">
+	 	select * from Employee where emp_name like #{emp_name}
+	 </select>
+	 <select id="queryUseFuByName" parameterType="String" resultType="com.j.pojo.User">
+	 	select * from User where emp_name like #{user_name}
+	 </select>
+	 
+<!-- 改 -->
+	 
+	 
+</mapper>
+
+
+

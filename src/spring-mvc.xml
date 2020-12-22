@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
+    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd">
+      
+      
+<!-- 1、配置controller扫描 -->
+   <context:component-scan base-package="com.j">
+     <!-- 只扫描Controller层 -->
+     <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+   </context:component-scan>
+   
+<!-- 2、注解驱动 -->
+   <mvc:annotation-driven></mvc:annotation-driven>
+   
+<!-- 3、配置jsp视图解析器 -->
+<!-- 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"> 
+        配置视图响应的前缀 
+        <property name="prefix" value="/WEB-INF/jsp/"></property> 
+        配置视图响应的后缀 
+        <property name="suffix" value=".jsp"></property> 
+	</bean> -->
+   
+<!-- html视图 -->
+<!-- 	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+	  <property name="templateLoaderPath">
+	  	<value>/WEB-INF/html</value>
+	  </property>
+	  <property name="freemarkerSettings">
+	  	<props>
+	  	  编码格式
+	  	  <prop key="template_update_delay">1</prop>
+	  	  默认编码
+	  	  <prop key="default_encoding">UTF-8</prop>
+	  	  数字格式
+	  	  <prop key="number_format">0.##</prop>
+	  	  时间编码格式
+	  	  <prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+	  	</props>
+	  </property>
+	</bean>	 
+	<bean id="htmlviewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		 后缀 
+		<property name="suffix" value=".html"></property>
+		
+		<property name="order" value="0"></property>
+		 传输格式 
+		<property name="contentType" value="text/html;charset=UTF-8"></property>
+	</bean>-->
+	
+	
+	<mvc:default-servlet-handler/>
+    <!--网络资源视图解析器，配置视图格式，也可以是html和jsp-->	
+	<bean id="jspViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/html/"/><!--前缀-->
+        <property name="suffix" value=".html"/><!--后缀-->
+        <property name="order" value="0"/><!--设置加载的时机或优先级，试图加载首先扫描是否有freemarker模板故为0（优先从0开始），若没有就加载jsp，数值越小优先级越高-->
+        <property name="contentType" value="text/html;charset=UTF-8"></property>
+    </bean>
+	
+	<mvc:annotation-driven >  
+        <mvc:message-converters register-defaults="true">  
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter" >
+                <property name = "supportedMediaTypes">  
+                    <list>  
+                        <value>application/json;charset=utf-8</value>  
+                        <value>text/html;charset=utf-8</value>  
+                        <!-- application 可以在任意 form 表单里面 enctype 属性默认找到 -->  
+                        <value>application/x-www-form-urlencoded</value>  
+                    </list>  
+                </property>  
+            </bean>  
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" ></bean>  
+        </mvc:message-converters>  
+    </mvc:annotation-driven> 
+	
+	<!-- SpringMvc拦截器  注册-->
+<!-- 	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"></mvc:mapping>
+			<mvc:mapping path="*.do"></mvc:mapping>
+			<bean class="com.j.util.MyInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors> -->
+	
+	<!-- 注册异常处理类 -->
+<!-- 	<bean id="exceptionResolver" class="com.j.util.ExceptionResolver">
+		
+	</bean> -->
+</beans>

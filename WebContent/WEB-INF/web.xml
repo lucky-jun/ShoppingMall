@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	id="WebApp_ID" version="3.1">
+	<display-name>SpringMVCDemo</display-name>
+	  <welcome-file-list>
+	    <welcome-file>index.html</welcome-file>
+	  </welcome-file-list>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:applicationContext.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<servlet>
+		<servlet-name>springmvc</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<!--配置Springmvc前端控制器 SpringMVC的配置文件默认路径/WEB-INF/springmvc-servlet.xml -->
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:spring-mvc.xml</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>springmvc</servlet-name>
+		<!-- 设置所有以action结尾请求进入SpringMVC -->
+		<url-pattern>*.do</url-pattern>
+		<url-pattern>*.action</url-pattern>
+	</servlet-mapping>
+
+	
+
+	<!--解决post乱码问题 -->
+	<filter>
+		<filter-name>encoding</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encoding</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- <servlet> <servlet-name>springmvc</servlet-name> <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class> 
+		配置Springmvc前端控制器 SpringMVC的配置文件默认路径/WEB-INF/servlet.xml <init-param> <param-name>contextConfigLocation</param-name> 
+		<param-value>classpath:spring-mvc.xml</param-value> </init-param> </servlet> 
+		<servlet-mapping> <servlet-name>springmvc</servlet-name> 设置所有以action结尾请求进入SpringMVC 
+		<url-pattern>*.action</url-pattern> </servlet-mapping> -->
+</web-app>
