@@ -1,5 +1,6 @@
 package com.j.controller;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
+import com.j.pojo.PasswordTable;
+import com.j.pojo.User;
 import com.j.service.UserManageService;
 
 @Controller
@@ -77,6 +80,48 @@ public class UserManageController {
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("flag", queryRegistByuserID);
 		return JSON.toJSONString(map);
+	}
+		//注册插入数据
+	@ResponseBody
+	@RequestMapping(value="/insertByRegist.action")
+						// 名字，			性别，		权限(邀请码权限)，身份证号，		电话，		地址 ，		登录昵称，			密码				密保1				密保2					密保1答案					密保2答案
+	public String regist(String name,String gender,String power,String uid,String tel,String address,String username,String password,String question_one,String question_two,String question_one_key,String question_two_key) {
+		Map<String,Object> map = new HashMap<String , Object>();
+		PasswordTable pwd = new PasswordTable();
+		pwd.setPwd_username(username);
+		pwd.setPwd_password(password);
+		//注册日期
+		//权限
+		pwd.setPwd_question_one(question_one);
+		pwd.setPwd_question_two(question_two);
+		pwd.setPwd_question_one_key(question_one_key);
+		pwd.setPwd_question_two_key(question_two_key);
+		//power==10?普通用户：员工
+		System.out.println("界面回传权限值："+power);
+		if(Integer.valueOf(power)==10){
+			User user = new User();
+			user.setUser_name(name);
+			user.setUser_gender(gender);
+			user.setUser_uid(uid);
+			user.setUser_phone_number(tel);
+			user.setUser_address(address);
+			user.setUser_power(10);
+			int insertUserRegist = userManageService.insertUserRegist(pwd, user);
+			System.out.println("Controller普通用户注册返回值："+insertUserRegist);
+			if(insertUserRegist>0) {
+				map.put("flag", true);
+			}else {
+				map.put("flag", false);
+			}
+		}else {
+			System.out.println("员工开始注册");
+		}
+
+		
+		
+		
+		
+		return null;
 	}
 	//员工注册
 		//邀请码查询

@@ -7,15 +7,58 @@
 		<!-- 第一种：在dao中添加注解@Param(这里是需要的别名)
 		   第二种：默认的方式arg0，arg1.....	
 	 -->
+	 
+	 <!-- 
+	 	prefix:在trim标签内sql语句加上前缀。
+		suffix:在trim标签内sql语句加上后缀。
+		prefixOverrides:指定去除多余的前缀内容
+		suffixOverrides:指定去除多余的后缀内容，如：suffixOverrides=","，去除trim标签内sql语句多余的后缀","。
+	  -->
+	 
+	 
 <!-- 增 -->
+	<!-- 注册插入 -->
+		<!-- 密码表插入 -->
 	 <insert id="insertByPasswordTable" parameterType="com.j.pojo.PasswordTable">
-	 	insert into PasswordTable(pwd_username,pwd_password,pwd_power,pwd_regist_data,pwd_question_one,pwd_question_two,pwd_question_one_key,pwd_question_two_key)
-	 	 values(#{pwd_username},#{pwd_password},#{pwd_power},#{pwd_regist_data},#{pwd_question_one},#{pwd_question_two},#{pwd_question_one_key},#{pwd_question_two_key})
+	 	insert into PasswordTable(pwd_username,pwd_password,pwd_power,pwd_regist_data,
+	 	<trim suffix=")" suffixOverrides=",">
+	 		<if test="pwd_question_one!=null">pwd_question_one,</if>
+	 		<if test="pwd_question_two!=null">pwd_question_two,</if>
+	 		<if test="pwd_question_one_key!=null">pwd_question_one_key,</if>
+	 		<if test="pwd_question_two_key!=null">pwd_question_two_key,</if>
+	 	</trim>
+	 	 values(
+	 	<trim suffix=")" suffixOverrides=",">
+	 		<if test="pwd_question_one!=null">#{pwd_question_one},</if>
+	 		<if test="pwd_question_two!=null">#{pwd_question_two},</if>
+	 		<if test="pwd_question_one_key!=null">#{pwd_question_one_key},</if>
+	 		<if test="pwd_question_two_key!=null">#{pwd_question_two_key},</if>
+	 	</trim>
 	 </insert>
+	 	<!-- User表数据插入 -->
 	 <insert id="insertByUser" parameterType="com.j.pojo.User">
-	 	insert into User(user_name,user_gender,user_uid,user_phone_number,user_address,user_pasid)
-	 	 values(#{user_name},#{user_gender},#{user_uid},#{user_phone_number},#{user_address},#{user_pasid})
+	 	insert into User(user_name,user_power,user_pasid,
+	 	<trim suffix=")" suffixOverrides=",">
+	 		<if test="user_gender!=null">user_gender,</if>
+	 		<if test="user_uid!=null">user_uid,</if>
+	 		<if test="user_phone_number!=null">user_phone_number,</if>
+	 		<if test="user_address!=null">user_address,</if>
+	 	</trim>
+	 	 values(#{user_name},#{user_power},#{user_pasid},
+	 	<trim suffix=")" suffixOverrides=",">
+	 		<if test="user_gender!=null">#{user_gender},</if>
+	 		<if test="user_uid!=null">#{user_uid},</if>
+	 		<if test="user_phone_number!=null">#{user_phone_number},</if>
+	 		<if test="user_address!=null">#{user_address},</if>
+	 	</trim>
 	 </insert>
+	 	<!-- 会员表插入 -->
+	 <insert id="insertByMember" parameterType="int">
+	 	insert into Member(mem_userid) values(#{mem_userid})
+	 </insert>
+	 
+	 
+	 	<!-- 员工注册信息插入 -->
 	 <insert id="insertByEmployee" parameterType="com.j.pojo.Employee">
 	 	insert into Employee(emp_name,emp_gender,emp_depid,emp_userid,emp_phone_number,emp_address,emp_pasid)
 	 	 values(#{emp_name},#{emp_gender},#{emp_depid},#{emp_userid},#{emp_phone_number},#{emp_address},#{emp_pasid})

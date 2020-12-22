@@ -12,8 +12,11 @@ import com.j.pojo.User;
 public interface UserManageDao {
 //增
 	//注册用户
+		//普通用户信息插入
 	public int insertByPasswordTable(PasswordTable pawT);
 	public int insertByUser(User user);
+	public int insertByMember(String user_id);
+		//员工信息插入
 	public int insertByEmployee(Employee employee);
 //删
 	//按ID删除

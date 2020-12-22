@@ -1,13 +1,26 @@
 package com.j.util;
 
 import java.sql.Date;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.springframework.stereotype.Component;
 @Component
 public class DateFormat {
+
 	
-	public String formatDate(Long date) {
+	//util时间转换成sql时间
+	public java.sql.Date DateUtiltoSql(Date date){
+		//时间格式规则
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		//long类型转换String时间类型
+		String stringDate = sdf.format(date);
+		//String时间类型转换sql.Date类型
+		Date sqlDate = java.sql.Date.valueOf(stringDate);
+		return sqlDate;
+	}
+	//util时间转String时间
+	public String DateUtiltoString(java.util.Date date) {
 		//时间格式规则
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		//long类型转换String时间类型
@@ -15,29 +28,22 @@ public class DateFormat {
 		return stringDate;
 	}
 	
-	//util时间转换成sql时间
-	public java.sql.Date DateUtilLongtoSql(Long date){
-		//转换时间格式
-		String formatDate = this.formatDate(date);
-		//String时间类型转换sql.Date类型
-		Date sqlDate = java.sql.Date.valueOf(formatDate);
-		return sqlDate;
-	}
-	//util时间转String时间
-	public String DateUtiltoString(java.util.Date date) {
-		return this.formatDate(date.getTime());
-	}
-	
 	//sql时间转换成String时间
-	public String DateSqlLongtoString(Long date){
-		//转换时间格式
-		String formatDate = this.formatDate(date);
-		return formatDate;
+	public String DateSqltoString(java.sql.Date date){
+		//时间格式规则
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		//long类型转换String时间类型
+		String stringDate = sdf.format(date);
+		return stringDate;
 	}
 	//sql时间转化成util.Date时间
-	public java.util.Date DateSqlLongtoUtil(java.sql.Date date){
-		String formatDate = this.formatDate(date.getTime());
-		return new java.util.Date(formatDate);
+	public java.util.Date DateSqltoUtil(java.util.Date date) throws ParseException{
+		//时间格式规则
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		//long类型转换String时间类型
+		String stringDate = sdf.format(date);
+		java.util.Date parse = sdf.parse(stringDate);
+		return parse;
 	}
 }
 //// util.date转换成sql.date

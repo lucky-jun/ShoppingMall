@@ -12,9 +12,10 @@ import com.j.pojo.User;
 public interface UserManageService {
 //增
 	//注册用户
-	public int insertByPasswordTable(PasswordTable pawT);
-	public int insertByUser(User user);
-	public int insertByEmployee(Employee employee);
+	public int insertUserRegist(PasswordTable pawT,User user);
+//	public int insertByPasswordTable(PasswordTable pawT);
+//	public int insertByUser(User user);
+//	public int insertByEmployee(Employee employee);
 //删
 //查
 	//登录查询

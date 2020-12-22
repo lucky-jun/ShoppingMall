@@ -26,23 +26,40 @@ public class UserManageServiceImpl implements UserManageService{
 	@Autowired
 	private DateFormat dateFormat;
 
-	@Override
-	public int insertByPasswordTable(PasswordTable pawT) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	
 
 	@Override
-	public int insertByUser(User user) {
-		// TODO Auto-generated method stub
+	public int insertUserRegist(PasswordTable pawT, User user) {
+		
+		//密码插入
+		pawT.setPwd_regist_data(new Date());
+		int insertByPasswordTable = userManageDao.insertByPasswordTable(pawT);
+		PasswordTable queryByUsernameAndPassword = userManageDao.queryByUsernameAndPassword(pawT.getPwd_username(), pawT.getPwd_password());
+		
+		//用户插入
+		user.setUser_power(10);
+		
+		
 		return 0;
 	}
-
-	@Override
-	public int insertByEmployee(Employee employee) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	
+//	@Override
+//	public int insertByPasswordTable(PasswordTable pawT) {
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
+//
+//	@Override
+//	public int insertByUser(User user) {
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
+//
+//	@Override
+//	public int insertByEmployee(Employee employee) {
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
 
 	@Override
 	public Map<String,Object> queryByUsernameAndPassword(String username, String password) {
@@ -101,12 +118,11 @@ public class UserManageServiceImpl implements UserManageService{
 			map.put("flag", false);
 		}else {
 			map.put("flag", true);
-			Date inv_date = queryByInvitationCode.getInv_date();
-			//时间转换
-			queryByInvitationCode.setInv_date(dateFormat.DateUtiltoString(queryByInvitationCode.getInv_date()));
+			System.out.println("++++++++++:"+queryByInvitationCode.getInv_date().toString());
 			//赋值
 			map.put("data",queryByInvitationCode);
 		}
 		return map;
 	}
+
 }
