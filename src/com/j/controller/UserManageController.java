@@ -49,6 +49,8 @@ public class UserManageController {
 			session.setAttribute("USER_SESSION", map2.get("userID")+"-"+username);
 			map.put("flag", map2.get("flag"));
 			map.put("userId", session.getId());
+			System.out.println(map2.get("lastTime"));
+			map.put("lastTime", map2.get("lastTime"));
 			System.out.println(map2.get("power"));
 			if(map2.get("power").equals(10)) {
 				map.put("user","普通用户登录");
@@ -154,10 +156,11 @@ public class UserManageController {
 	//员工注册
 		//邀请码查询
 	@ResponseBody
-	@RequestMapping(value="/queryByinvcode.action",method = RequestMethod.POST)
-	public String registByInv(String inv_code) {
-		System.out.println(inv_code);
-		Map<String, Object> map2 = userManageService.queryByInvitationCode(inv_code);
+	@RequestMapping(value="/queryBydepcode.action",method = RequestMethod.POST)
+	public String registByInv(String dep_code) {
+		System.out.println(dep_code);
+//		Map<String, Object> map2 = userManageService.queryByInvitationCode(inv_code);
+		Map<String, Object> map2 = userManageService.queryDepByCode(dep_code);
 		Map<String,Object> map = new HashMap<String, Object>();
 		System.out.println("1111:"+map2.get("flag"));
 		if(map2.get("flag").equals(false)) {

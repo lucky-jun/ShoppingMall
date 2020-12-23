@@ -6,7 +6,6 @@ import org.apache.ibatis.annotations.Param;
 
 import com.j.pojo.Department;
 import com.j.pojo.Employee;
-import com.j.pojo.InvitationCode;
 import com.j.pojo.PasswordTable;
 import com.j.pojo.User;
 
@@ -29,7 +28,8 @@ public interface UserManageService {
 	public boolean queryRegistByuserID(String user_id);
 	//员工注册
 		//查询邀请码
-	public Map<String, Object> queryByInvitationCode(String code);
+//	public Map<String, Object> queryByInvitationCode(String code);
+	public Map<String, Object> queryDepByCode(String code);
 	
 	
 	//信息查询

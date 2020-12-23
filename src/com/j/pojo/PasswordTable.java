@@ -1,7 +1,12 @@
 package com.j.pojo;
 
+//import java.sql.Date;
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
+
+import java.sql.Timestamp;
+@Component
 public class PasswordTable {
 	private int pwd_id;
 	private String pwd_username;
@@ -46,8 +51,8 @@ public class PasswordTable {
 	public Date getPwd_login_data() {
 		return pwd_login_data;
 	}
-	public void setPwd_login_data(Date pwd_login_data) {
-		this.pwd_login_data = pwd_login_data;
+	public void setPwd_login_data(Date dateUtiltoSql) {
+		this.pwd_login_data = dateUtiltoSql;
 	}
 	public String getPwd_question_one() {
 		return pwd_question_one;

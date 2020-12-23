@@ -1,23 +1,29 @@
 package com.j.util;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.springframework.stereotype.Component;
+
+import oracle.sql.TIMESTAMP;
 @Component
 public class DateFormat {
 
 	
 	//util时间转换成sql时间
-	public java.sql.Date DateUtiltoSql(Date date){
+	public Timestamp DateUtiltoSql(java.util.Date date){
+//		java.sql.Timestamp t = new java.sql.Timestamp(date.getTime());
+//		System.out.println(t);
 		//时间格式规则
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		//long类型转换String时间类型
-		String stringDate = sdf.format(date);
-		//String时间类型转换sql.Date类型
-		Date sqlDate = java.sql.Date.valueOf(stringDate);
-		return sqlDate;
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//		//long类型转换String时间类型
+//		String stringDate = sdf.format(date);
+//		//String时间类型转换sql.Date类型
+//		Date sqlDate = java.sql.Date.valueOf(stringDate);
+//		Timestamp valueOf = Timestamp.valueOf(stringDate);
+		return null;
 	}
 	//util时间转String时间
 	public String DateUtiltoString(java.util.Date date) {

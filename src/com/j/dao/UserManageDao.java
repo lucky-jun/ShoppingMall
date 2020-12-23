@@ -1,12 +1,14 @@
 package com.j.dao;
 
+import java.sql.Date;
+//import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
 import com.j.pojo.Department;
 import com.j.pojo.Employee;
-import com.j.pojo.InvitationCode;
+//import com.j.pojo.InvitationCode;
 import com.j.pojo.PasswordTable;
 import com.j.pojo.User;
 
@@ -34,7 +36,8 @@ public interface UserManageDao {
 	public int queryRegistByuserID(@Param("user_uid")String user_id);
 	//员工注册
 		//查询注册码
-	public InvitationCode queryByInvitationCode(@Param("code")String code); 
+//	public InvitationCode queryByInvitationCode(@Param("code")String code); 
+	public Department queryDepByCode(@Param("code")String code);
 	
 	//查询全部
 	public List<Employee> queryEmpAll();
@@ -51,5 +54,5 @@ public interface UserManageDao {
 	
 	
 //改
-	
+	public int updatePWTByUsername(PasswordTable passwordTable);
 }

@@ -1,5 +1,6 @@
 package com.j.service.impl;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.j.dao.UserManageDao;
 import com.j.pojo.Department;
 import com.j.pojo.Employee;
-import com.j.pojo.InvitationCode;
 import com.j.pojo.PasswordTable;
 import com.j.pojo.User;
+//import com.j.service.InvitationCode;
 import com.j.service.UserManageService;
 import com.j.util.DateFormat;
 
@@ -28,6 +29,8 @@ public class UserManageServiceImpl implements UserManageService{
 	private UserManageDao userManageDao;
 	@Autowired
 	private DateFormat dateFormat;
+	@Autowired
+	private PasswordTable passwordTable;
 
 	
 
@@ -39,7 +42,7 @@ public class UserManageServiceImpl implements UserManageService{
 		pawT.setPwd_power(user.getUser_power());
 		System.out.println(pawT.getPwd_power());
 		System.out.println(pawT.getPwd_regist_data());
-		System.out.println(pawT.getPwd_regist_data());
+		System.out.println(pawT.getPwd_login_data());
 		System.out.println(pawT.getPwd_question_one());
 		System.out.println(pawT.getPwd_question_two());
 		System.out.println(pawT.getPwd_question_one_key());
@@ -47,10 +50,12 @@ public class UserManageServiceImpl implements UserManageService{
 		System.out.println("------------------------service:end");
 		//密码插入
 		pawT.setPwd_regist_data(new Date());
+		System.out.println("获取的注册时间："+pawT.getPwd_regist_data());
 		int insertByPasswordTable = userManageDao.insertByPasswordTable(pawT);
 		PasswordTable queryByUsernameAndPassword = userManageDao.queryByUsernameAndPassword(pawT.getPwd_username(), pawT.getPwd_password());
 		//用户插入
-		if(user.getUser_uid()==null)user.setUser_uid(Integer.toString(queryByUsernameAndPassword.getPwd_id()));
+		System.out.println("UID:"+user.getUser_uid());
+		if(user.getUser_uid()==null||user.getUser_uid()=="")user.setUser_uid(Integer.toString(queryByUsernameAndPassword.getPwd_id()));
 		user.setUser_pasid(queryByUsernameAndPassword.getPwd_id());
 		int insertByUser = userManageDao.insertByUser(user);
 		//获取用户ID，创建会员账号
@@ -70,7 +75,7 @@ public class UserManageServiceImpl implements UserManageService{
 		int insertByPasswordTable = userManageDao.insertByPasswordTable(pawT);
 		PasswordTable queryByUsernameAndPassword = userManageDao.queryByUsernameAndPassword(pawT.getPwd_username(), pawT.getPwd_password());
 		
-		//用户插入
+		//信息插入
 		Department queryDepByPower = this.queryDepByPower(Integer.toString(pawT.getPwd_power()));
 		emp.setEmp_pasid(queryByUsernameAndPassword.getPwd_id());
 		emp.setEmp_depid(queryDepByPower.getDep_id());
@@ -79,6 +84,7 @@ public class UserManageServiceImpl implements UserManageService{
 		return insertByPasswordTable*insertByEmployee;
 	}
 	
+	//登录
 	@Override
 	public Map<String,Object> queryByUsernameAndPassword(String username, String password) {
 		System.out.println("Service1:"+username);
@@ -92,6 +98,18 @@ public class UserManageServiceImpl implements UserManageService{
 			return map;
 		}
 		//有值返回true
+		System.out.println("1111111111:"+username);
+		passwordTable.setPwd_username(username);
+		passwordTable.setPwd_login_data(new Date());
+		System.out.println(passwordTable.getPwd_username());
+		System.out.println(passwordTable.getPwd_password());
+		System.out.println(passwordTable.getPwd_login_data());
+		int updatePWTByUsername = userManageDao.updatePWTByUsername(passwordTable);
+		PasswordTable queryByUsernameAndPassword = userManageDao.queryByUsernameAndPassword(username, password);
+		System.out.println("123123123:"+queryByUsernameAndPassword.getPwd_login_data());
+		System.out.println("123123123:"+pw.getPwd_login_data());
+		System.out.println(updatePWTByUsername);
+		map.put("lastTime",dateFormat.DateUtiltoString(pw.getPwd_login_data()));
 		if(pw.getPwd_power()==10) {
 			User queryByUser = userManageDao.queryByUser(pw.getPwd_id());
 			map.put("userID", queryByUser.getUser_id());
@@ -126,22 +144,24 @@ public class UserManageServiceImpl implements UserManageService{
 
 	//查询邀请码
 	@Override
-	public Map<String,Object> queryByInvitationCode(String code) {
+	public Map<String,Object> queryDepByCode(String code) {
 		System.out.println("service:"+code);
-		InvitationCode queryByInvitationCode = userManageDao.queryByInvitationCode(code);
+//		InvitationCode queryByInvitationCode = userManageDao.queryByInvitationCode(code);
+		Department queryDepByCode = userManageDao.queryDepByCode(code);
 		Map<String,Object> map = new HashMap<String, Object>();
-		System.out.println("----:"+queryByInvitationCode);
-		if(queryByInvitationCode==null) {
+		System.out.println("----:"+queryDepByCode);
+		if(queryDepByCode==null) {
 			map.put("flag", false);
 		}else {
 			map.put("flag", true);
-			System.out.println("++++++++++:"+queryByInvitationCode.getInv_date().toString());
+//			System.out.println("++++++++++:"+queryByInvitationCode.getInv_date().toString());
 			//赋值
-			map.put("data",queryByInvitationCode);
+			map.put("data",queryDepByCode);
 		}
 		return map;
 	}
 
+	//权限查询
 	@Override
 	public Department queryDepByPower(String dep_power) {
 		Department queryDepByPower = userManageDao.queryDepByPower(dep_power);

@@ -1,4 +1,4 @@
-package com.j.pojo;
+package com.j.service;
 
 import java.util.Date;
 

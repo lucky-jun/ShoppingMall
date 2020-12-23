@@ -39,14 +39,14 @@
 	 <insert id="insertByUser" parameterType="com.j.pojo.User">
 	 	insert into User(user_name,user_power,user_pasid,
 	 	<trim suffix=")" suffixOverrides=",">
-	 		<if test="user_gender!=null">user_gender,</if>
+	 		<if test="user_gender!=null || user_gender!='' ">user_gender,</if>
 	 		<if test="user_uid!=null">user_uid,</if>
 	 		<if test="user_phone_number!=null">user_phone_number,</if>
 	 		<if test="user_address!=null">user_address,</if>
 	 	</trim>
 	 	 values(#{user_name},#{user_power},#{user_pasid},
 	 	<trim suffix=")" suffixOverrides=",">
-	 		<if test="user_gender!=null">#{user_gender},</if>
+	 		<if test="user_gender!=null|| user_gender!='' ">#{user_gender},</if>
 	 		<if test="user_uid!=null">#{user_uid},</if>
 	 		<if test="user_phone_number!=null">#{user_phone_number},</if>
 	 		<if test="user_address!=null">#{user_address},</if>
@@ -91,8 +91,11 @@
 	 </select>
 	 	<!-- 员工注册 -->
 	 		<!-- 邀请码查询 -->
-	 <select id="queryByInvitationCode" parameterType="String" resultType="com.j.pojo.InvitationCode">
+<!-- 	 <select id="queryByInvitationCode" parameterType="String" resultType="com.j.pojo.InvitationCode">
 	 	select * from InvitationCode where inv_code=#{code}
+	 </select> -->
+	 <select id="queryDepByCode" parameterType="String" resultType="com.j.pojo.Department">
+	 	select * from Department where dep_code=#{code}
 	 </select>
 	 
 	 <!-- 信息查询 -->
@@ -121,7 +124,20 @@
 	 </select>
 	 
 <!-- 改 -->
-	 
+	 <update id="updatePWTByUsername" parameterType="com.j.pojo.PasswordTable">
+	 	update PasswordTable 
+		<set>
+			<if test="pwd_username != null&amp;&amp;pwd_username!=''">pwd_username=#{pwd_username},</if>
+			<if test="pwd_password != null&amp;pwd_password !=''">pwd_password=#{pwd_password},</if>
+			<if test="pwd_power!=null&amp;pwd_power!=''">pwd_power=#{pwd_power},</if>
+			<if test="pwd_login_data!=null">pwd_login_data=#{pwd_login_data},</if>
+			<if test="pwd_question_one!=null">pwd_question_one=#{pwd_question_one},</if>
+			<if test="pwd_question_two!=null">pwd_question_two=#{pwd_question_two},</if>
+			<if test="pwd_question_one_key!=null">pwd_question_one_key=#{pwd_question_one_key},</if>
+			<if test="pwd_question_two_key!=null">pwd_question_two_key=#{pwd_question_two_key},</if>
+		</set>
+		where pwd_username=#{pwd_username}
+	 </update>
 	 
 </mapper>
 
