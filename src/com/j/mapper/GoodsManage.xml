@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 校验规则 -->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.j.dao.GoodsManageDao">
+		<!-- 第一种：在dao中添加注解@Param(这里是需要的别名)
+		   第二种：默认的方式arg0，arg1.....	
+	 -->
+	 
+	 <!-- 
+	 	prefix:在trim标签内sql语句加上前缀。
+		suffix:在trim标签内sql语句加上后缀。
+		prefixOverrides:指定去除多余的前缀内容
+		suffixOverrides:指定去除多余的后缀内容，如：suffixOverrides=","，去除trim标签内sql语句多余的后缀","。
+	  -->
+	  
+<!-- 增 -->
+	<!-- 添加商品到Goods -->
+	<insert id="insertGoToGoods" parameterType="com.j.pojo.Goods">
+		insert into Goods(goo_name,goo_stock,goo_buying_price,goo_selling_price,goo_supid,goo_type
+		<trim suffix=")" suffixOverrides=",">
+			<if test="goo_image!=null&amp;&amp;goo_image!=''">goo_image,</if>
+			<if test="goo_text!=null&amp;&amp;goo_text!=''">goo_text,</if>
+			<if test="goo_details!=null&amp;&amp;goo_details!=''">goo_details,</if>
+		</trim>
+		value(#{goo_name},#{goo_stock},#{goo_buying_price},#{goo_selling_price},#{goo_supid},#{goo_type},
+		<trim suffix=")" suffixOverrides=",">
+			<if test="goo_image!=null&amp;&amp;goo_image!=''">#{goo_image},</if>
+			<if test="goo_text!=null&amp;&amp;goo_text!=''">#{goo_text},</if>
+			<if test="goo_details!=null&amp;&amp;goo_details!=''">#{goo_details},</if>
+		</trim>
+	</insert>
+	<!-- 添加商品到MyCart -->
+	<insert id="insertGoToMyCart">
+		insert into MyCart(car_userid,car_gooid,car_goonum,car_sumprice,car_starttime,car_state) 
+		values(#{car_userid},#{car_gooid},#{car_goonum},#{car_sumprice},#{car_starttime},#{car_state})
+	</insert>
+	<!-- 添加商品到MyOrder -->
+	<insert id="insertGoToMyOrder">
+		insert into MyOrder(ord_userid,ord_goodsinf,ord_sumprice,ord_paystate,ord_orderstate,ord_createtime) 
+		values(#{ord_userid},#{ord_goodsinf},#{ord_sumprice},#{ord_paystate},#{ord_orderstate},#{ord_createtime})
+	</insert>
+	<!-- 添加商品到OrderHistory -->
+	<insert id="insertGoToOrderHistory">
+		insert into OrderHistory(his_userid,his_goodsinf,his_sumprice,his_starttime,his_stoptime) 
+		values(#{his_userid},#{his_goodsinf},#{his_sumprice},#{his_starttime},#{his_stoptime})
+	</insert>
+
+<!-- 删 -->
+	<!-- 删除购物车中的商品已下单或者清除购物车的商品信息：MyCart -->
+		<delete id="deleteToMyCart">
+			delete table from MyCart where car_id in(#{ord_id})
+		</delete>
+	<!-- 删除商品订单中取消或者点击收货:MyOrder -->
+		<delete id="deleteToMyOrder"></delete>
+
+
+<!-- 查 -->
+
+
+
+<!-- 改 -->
+	  
+	  
+</mapper>
