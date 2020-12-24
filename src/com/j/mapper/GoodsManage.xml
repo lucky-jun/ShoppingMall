@@ -32,35 +32,124 @@
 		</trim>
 	</insert>
 	<!-- 添加商品到MyCart -->
-	<insert id="insertGoToMyCart">
+	<insert id="insertGoToMyCart" parameterType="com.j.pojo.MyCart">
 		insert into MyCart(car_userid,car_gooid,car_goonum,car_sumprice,car_starttime,car_state) 
 		values(#{car_userid},#{car_gooid},#{car_goonum},#{car_sumprice},#{car_starttime},#{car_state})
 	</insert>
 	<!-- 添加商品到MyOrder -->
-	<insert id="insertGoToMyOrder">
+	<insert id="insertGoToMyOrder" parameterType="com.j.pojo.MyOrder">
 		insert into MyOrder(ord_userid,ord_goodsinf,ord_sumprice,ord_paystate,ord_orderstate,ord_createtime) 
 		values(#{ord_userid},#{ord_goodsinf},#{ord_sumprice},#{ord_paystate},#{ord_orderstate},#{ord_createtime})
 	</insert>
 	<!-- 添加商品到OrderHistory -->
-	<insert id="insertGoToOrderHistory">
+	<insert id="insertGoToOrderHistory" parameterType="com.j.pojo.OrderHistory">
 		insert into OrderHistory(his_userid,his_goodsinf,his_sumprice,his_starttime,his_stoptime) 
 		values(#{his_userid},#{his_goodsinf},#{his_sumprice},#{his_starttime},#{his_stoptime})
 	</insert>
 
 <!-- 删 -->
-	<!-- 删除购物车中的商品已下单或者清除购物车的商品信息：MyCart -->
-		<delete id="deleteToMyCart">
-			delete table from MyCart where car_id in(#{ord_id})
+	<!-- 删除购物车中已下单或者点击删除购物车商品的信息：MyCart ,以List形式传入-->
+<!-- 		<delete id="deleteToMyCart" parameterType="java.util.List" >
+			delete table from MyCart where car_id in
+			<foreach collection="list" index="index" item="id" open="(" separator="," close=")">
+				#{id}
+			</foreach>
+		</delete> -->
+		<!-- 购物车批量删除,购买或者移除:以map传入商品ID的list和用户ID -->
+		<delete id="deleteToMyCartByList" parameterType="Map">
+			delete table from MyCart where car_id in
+			<foreach collection="gooid" index="index" item="id" open="(" separator="," close=")">
+				#{id}
+			</foreach>
+			and car_userid=#{car_userid}
 		</delete>
-	<!-- 删除商品订单中取消或者点击收货:MyOrder -->
-		<delete id="deleteToMyOrder"></delete>
+		<!-- 购物车单个删除 -->
+<!-- 		<delete id="deleteToMyCartByID" parameterType="int">
+			delete table from MyCart where car_id=#{car_id}
+		</delete> -->
+	<!-- 删除商品订单中取消或者点击收货:MyOrder ，以map形式传入我的订单中的订单ID和用户ID-->
+		<delete id="deleteToMyOrder" parameterType="Map">
+			delete table from MyOrder ord_id=#{ord_id} and ord_userid=#{ord_userid}
+		</delete>
 
 
 <!-- 查 -->
-
-
-
+	<!-- 厂商查询 -->
+		<!-- 厂商名称查询 ：Supplier-->
+<!-- 	<select id="querySupplierByName" parameterType="String" resultType="com.j.pojo.Supplier">
+		select * from Supplier where sup_name=#{sup_name}
+	</select> -->
+		<!-- 厂ID称查询  -->
+	<!-- <select id="querySupplierByID" parameterType=""></select> -->
+	<!-- 商品查询 :Goods-->
+		<!-- 全部信息查询 -->
+			<!-- 普通用户全部商品信息查询 -->
+	<select id="queryGoodsByUserAll" resultType="com.j.pojo.Goods">
+		select * from Goods where goo_state=1
+	</select>
+			<!-- 员工全部商品信息查询 -->
+	<select id="queryGoodsAll" resultType="com.j.pojo.Goods">
+		select * from Goods
+	</select>
+		<!-- 名称查询 -->
+	<select id="queryGoodsByName" parameterType="String" resultType="com.j.pojo.Goods">
+		select * from Goods where goo_name=#{goo_name}
+	</select>
+		<!-- ID查询,浏览商品 -->
+	<select id="queryGoodsByID" parameterType="int" resultType="com.j.pojo.Goods">
+		select * from Goods where goo_id=#{goo_id}
+	</select>
+		<!-- 批量ID查询：购买商品等使用 ,传入List类型-->
+	<select id="queryGoodsByListID" parameterType="java.util.List" resultType="com.j.pojo.Goods">
+		select * from Goods where goo_id in
+		<foreach collection="list" item="id" index="index" separator=",">
+			#{id}
+		</foreach>
+	</select>
+	<!-- 购物车查询:MyCart -->
+		<!-- 用户购物车查询，int 传入用户ID -->
+	<select id="queryMyCartByUserAll" parameterType="int" resultType="com.j.pojo.MyCart">
+		select * from MyCart where car_userid=#{car_userid}
+	</select>
+		<!-- 员工查询 -->
+	<select id="queryMyCartAll">
+		select * from MyCart
+	</select>
+	<!-- 订单查询 ：MyOrder-->
+		<!-- 用户订单查询 -->
+	<select id="queryMyOrderByUserID" parameterType="int" resultType="com.j.pojo.MyOrder">
+		select * from MyOrder where ord_userid=#{ord_userid}
+	</select>
+		<!-- 员工订单查询 -->
+			<!-- 查询全部 -->
+	<select id="queryMyOrderAll" resultType="com.j.pojo.MyOrder">
+		select * from MyOrder
+	</select>
+			<!-- 订单状态查询 -->
+	<select id="queryMyOrderByOrderstate" parameterType="int" resultType="com.j.pojo.MyOrder">
+		select * from MyOrder where ord_orderstate=#{ord_orderstate}
+	</select>
+			<!-- 订单编号查询订单 -->
+	<select id="queryMyOrderByOrdid" parameterType="int" resultType="com.j.pojo.MyOrder">
+		select * from MyOrder where ord_id=#{ord_id}
+	</select>
+	<!-- 历史订单查询:OrderHistory -->
+		<!-- 用户查询 -->
+	<select id="queryOrderHistoryByUserID" parameterType="int" resultType="com.j.pojo.OrderHistory">
+		select * from OrderHistory where his_userid=#{his_userid}
+	</select>
+		<!-- 员工查询 -->
+	<select id="queryOrderHistoryAll" resultType="com.j.pojo.OrderHistory">
+		select * from OrderHistory
+	</select>
 <!-- 改 -->
-	  
-	  
+	<!-- 用户购物车增加购买数量:MyCart -->
+		<!-- 使用@Param注解修改别名，可不用写 parameterType传入值类型,但必须把所有参数写全-->
+<!-- 	<update id="updateMyCartToNumberByUidGid">
+		update 	MyCart set car_goonum=#{car_goonum} where car_userid=#{car_userid} and car_gooid=#{car_gooid}
+	</update> -->
+		<!--  使用Map传值 -->
+	<update id="updateMyCartToNumberByUidGid" parameterType="Map">
+		update 	MyCart set car_goonum=#{car_goonum} where car_userid=#{car_userid} and car_gooid=#{car_gooid} 
+	</update>
 </mapper>

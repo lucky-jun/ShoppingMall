@@ -3,11 +3,26 @@ package com.j.controller;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class test01 {
 	public static void main(String[] args) throws ParseException {
 
+		List<Integer> list1 = new ArrayList<Integer>();
+		list1.add(1);
+		list1.add(2);
+		list1.add(3);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("username", "ÕÅÈý");
+		map.put("age",18);
+		map.put("maptest",list1);
+		List<User> list2 = mapper.query(map);
+		
+		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String str = "2020-12-12 12:12:00";
 		Date parse = sdf.parse(str);
