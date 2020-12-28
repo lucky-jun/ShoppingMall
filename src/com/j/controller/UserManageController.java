@@ -9,6 +9,8 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,6 +22,9 @@ import com.j.pojo.User;
 import com.j.service.UserManageService;
 
 @Controller
+//报错：Access to XMLHttpRequest at 'http://localhost:8080/ShoppingMall/login.action
+//跨域问题解决办法：加@CrossOrigin 
+@CrossOrigin 
 public class UserManageController {
 	
 	@Autowired
@@ -36,7 +41,14 @@ public class UserManageController {
 //	登录
 	@ResponseBody //设置数据返回json格式
 	@RequestMapping(value="/login.action",method=RequestMethod.POST)
-	public String login(HttpSession session,String username,String password) {
+	public String login(@RequestBody Map username1) {
+//		public String login(@RequestBodyString data) {
+//		System.out.println(user.get);
+		System.out.println(username1);
+		System.out.println(username1.get("username"));
+		System.out.println(username1.get("password"));
+		String username = (String) username1.get("username");
+		String password = (String) username1.get("password");
 		System.out.println(username);
 		System.out.println(password);
 		Map<String, Object> map2 = userManageService.queryByUsernameAndPassword(username, password);
@@ -46,9 +58,9 @@ public class UserManageController {
 		//int i = 1/0;
 		if(map2.get("flag").equals(true)) {
 			System.out.println("查询到用户，正在登陆");
-			session.setAttribute("USER_SESSION", map2.get("userID")+"-"+username);
+//			session.setAttribute("USER_SESSION", map2.get("userID")+"-"+username);
 			map.put("flag", map2.get("flag"));
-			map.put("userId", session.getId());
+//			map.put("userId", session.getId());
 			System.out.println(map2.get("lastTime"));
 			map.put("lastTime", map2.get("lastTime"));
 			System.out.println(map2.get("power"));
