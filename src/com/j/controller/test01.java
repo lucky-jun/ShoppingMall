@@ -20,7 +20,7 @@ public class test01 {
 		map.put("username", "уехЩ");
 		map.put("age",18);
 		map.put("maptest",list1);
-		List<User> list2 = mapper.query(map);
+//		List<User> list2 = mapper.query(map);
 		
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -2,6 +2,8 @@ package com.j.pojo;
 
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
+@Component
 public class MyCart {
 	private int car_id;
 	private int car_userid;
@@ -54,7 +56,7 @@ public class MyCart {
 	}
 	@Override
 	public String toString() {
-		return "MyCart [car_id=" + car_id + ", car_userid=" + car_userid + ", car_gooid=" + car_gooid + ", car_goonum="
+		return "[car_id=" + car_id + ", car_userid=" + car_userid + ", car_gooid=" + car_gooid + ", car_goonum="
 				+ car_goonum + ", car_sumprice=" + car_sumprice + ", car_starttime=" + car_starttime + ", car_state="
 				+ car_state + "]";
 	}

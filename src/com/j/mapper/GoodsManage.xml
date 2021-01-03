@@ -87,6 +87,11 @@
 	<select id="queryGoodsByUserAll" resultType="com.j.pojo.Goods">
 		select * from Goods where goo_state=1
 	</select>
+	
+			<!-- 分页查找 -->
+	<select id="queryGoodsByPage" parameterType="int" resultType="com.j.pojo.Goods">
+		select * from Goods limit #{page},#{number}
+	</select>
 			<!-- 员工全部商品信息查询 -->
 	<select id="queryGoodsAll" resultType="com.j.pojo.Goods">
 		select * from Goods
@@ -108,8 +113,9 @@
 	</select>
 	<!-- 购物车查询:MyCart -->
 		<!-- 用户购物车查询，int 传入用户ID -->
-	<select id="queryMyCartByUserAll" parameterType="int" resultType="com.j.pojo.MyCart">
-		select * from MyCart where car_userid=#{car_userid}
+	<select id="queryMyCartByUserAll" parameterType="int" resultType="com.j.pojo.ToCart">
+		select m.car_userid as userId,m.car_gooid as goodsId,m.car_goonum as number,g.goo_selling_price as price,g.goo_name as name,g.goo_image as img  
+		from MyCart m left join Goods g on m.car_gooid=goo_id where m.car_userid = #{car_userid};
 	</select>
 		<!-- 员工查询 -->
 	<select id="queryMyCartAll">
@@ -120,6 +126,12 @@
 	<select id="queryMyOrderByUserID" parameterType="int" resultType="com.j.pojo.MyOrder">
 		select * from MyOrder where ord_userid=#{ord_userid}
 	</select>
+		<!-- 获取最新订单 -->
+	<select id="queryMyOrderNewByUserID" parameterType="int" resultType="int">
+		<!-- select * from MyOrder where ord_userid=#{ord_userid} order by ord_id desc -->
+		select max(ord_id) from MyOrder where ord_userid=#{ord_userid}
+	</select>	
+	
 		<!-- 员工订单查询 -->
 			<!-- 查询全部 -->
 	<select id="queryMyOrderAll" resultType="com.j.pojo.MyOrder">
@@ -151,5 +163,9 @@
 		<!--  使用Map传值 -->
 	<update id="updateMyCartToNumberByUidGid" parameterType="Map">
 		update 	MyCart set car_goonum=#{car_goonum} where car_userid=#{car_userid} and car_gooid=#{car_gooid} 
+	</update>
+	<!--  修改支付状态-->
+	<update id="updateMyOrderPayState" parameterType="String">
+		update MyOrder set ord_paystate=#{ord_paystate},ord_orderstate=#{ord_orderstate} where ord_id=#{ord_id}
 	</update>
 </mapper>

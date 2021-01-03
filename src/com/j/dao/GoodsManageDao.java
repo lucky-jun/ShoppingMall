@@ -9,6 +9,7 @@ import com.j.pojo.Goods;
 import com.j.pojo.MyCart;
 import com.j.pojo.MyOrder;
 import com.j.pojo.OrderHistory;
+import com.j.pojo.ToCart;
 
 public interface GoodsManageDao {
 //增
@@ -32,6 +33,7 @@ public interface GoodsManageDao {
 		//全部信息查询
 			//普通用户全部商品信息查询   yes
 	public List<Goods> queryGoodsByUserAll();
+	public List<Goods> queryGoodsByPage(@Param("page")int page,@Param("number")int number);
 			//员工全部商品信息查询
 	public List<Goods> queryGoodsAll();
 		//名称查询
@@ -42,12 +44,14 @@ public interface GoodsManageDao {
 	public List<Goods> queryGoodsByListID(List<Integer> goodsid);
 	// 购物车查询:MyCart
 		// 用户购物车查询，int 传入用户ID 
-	public List<MyCart> queryMyCartByUserAll(@Param("car_userid")int car_userid);
+	public List<ToCart> queryMyCartByUserAll(@Param("car_userid")int car_userid);
 		// 员工查询 
 	public List<MyCart> queryMyCartAll();
 	// 订单查询 ：MyOrder
 		//用户订单查询 
 	public List<MyOrder> queryMyOrderByUserID(@Param("ord_userid")int ord_userid);
+		//查询用户最新订单
+	public int queryMyOrderNewByUserID(@Param("ord_userid")int ord_userid);
 		// 员工订单查询
 			// 查询全部
 	public List<MyOrder> queryMyOrderAll();
@@ -64,6 +68,7 @@ public interface GoodsManageDao {
 	// 用户购物车增加购买数量:MyCart
 		// 使用Map传值
 	public int updateMyCartToNumberByUidGid(Map<String ,Object> map);
+	public int updateMyOrderPayState(@Param("ord_paystate") String ord_paystate,@Param("ord_orderstate") String ord_orderstate,@Param("ord_id") String ord_id);
 	
 	
 }

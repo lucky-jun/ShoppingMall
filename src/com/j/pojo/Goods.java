@@ -73,7 +73,7 @@ public class Goods {
 	}
 	@Override
 	public String toString() {
-		return "Goods [goo_id=" + goo_id + ", goo_name=" + goo_name + ", goo_stock=" + goo_stock + ", goo_buying_price="
+		return "[goo_id=" + goo_id + ", goo_name=" + goo_name + ", goo_stock=" + goo_stock + ", goo_buying_price="
 				+ goo_buying_price + ", goo_selling_price=" + goo_selling_price + ", goo_supid=" + goo_supid
 				+ ", goo_type=" + goo_type + ", goo_image=" + goo_image + ", goo_text=" + goo_text + ", goo_details="
 				+ goo_details + "]";
