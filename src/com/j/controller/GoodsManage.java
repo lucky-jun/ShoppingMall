@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
@@ -33,12 +34,18 @@ public class GoodsManage {
 //	首页获取商品展示
 	@ResponseBody
 	@RequestMapping(value="/queryGoodsPage.do",method=RequestMethod.POST)
-//	public List<Goods> Home(@RequestBody Map map) {
-		public String Home(String page,String limit) {
-		System.out.println(Integer.valueOf(page));
-		System.out.println(Integer.valueOf(limit));
+	public String Home(@RequestBody Map<String ,Integer> map2) {
+		System.out.println(map2);
+//		String page = (String) map2.get("page");
+//		String limit = (String) map2.get("limit");
+//		public String Home(String page,String limit) {
+		System.out.println(map2.get("page"));
+		System.out.println(map2.get("limit"));
+//		System.out.println(Integer.valueOf(page));
+//		System.out.println(Integer.valueOf(limit));
 //		List<Goods> queryGoodsByPage = goodsManageService.queryGoodsByPage((String) map.get("page"), (String) map.get("limit"));
-		List<Goods> queryGoodsByPage = goodsManageService.queryGoodsByPage(Integer.valueOf(page), Integer.valueOf(limit));
+//		List<Goods> queryGoodsByPage = goodsManageService.queryGoodsByPage(Integer.valueOf(page), Integer.valueOf(limit));
+		List<Goods> queryGoodsByPage = goodsManageService.queryGoodsByPage(Integer.valueOf(map2.get("page")), Integer.valueOf(map2.get("limit")));
 		System.out.println(queryGoodsByPage);
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("data", queryGoodsByPage);
@@ -62,10 +69,10 @@ public class GoodsManage {
 //	查看商品详情
 	@ResponseBody
 	@RequestMapping(value="/queryGoodsById.do",method=RequestMethod.POST)
-//	public List<Goods> Home(@RequestBody int goodsId) {
-	public String GoodsDetail(int goodsId) {
-		System.out.println(goodsId);
-		Goods queryGoodsByID = goodsManageService.queryGoodsByID(goodsId);
+	public String GoodsDetail(@RequestBody Map<String, Integer> map2) {
+//	public String GoodsDetail(Integer goodsId) {
+		System.out.println(map2.get("goodsId"));
+		Goods queryGoodsByID = goodsManageService.queryGoodsByID(map2.get("goodsId"));
 		
 		System.out.println(queryGoodsByID);
 		Map<String,Object> map = new HashMap<String, Object>();
@@ -76,15 +83,17 @@ public class GoodsManage {
 //	添加商品到购物车
 	@ResponseBody
 	@RequestMapping(value="/insertToCart.do",method=RequestMethod.POST)
-//	public List<Goods> Home(@RequestBody Map map) {
-	public String insertToMyCart(int userId,int goodsId,int number) {
-		System.out.println(userId);
-		System.out.println(goodsId);
-		System.out.println(number);
+	public String insertToMyCart(@RequestBody Map<String,Integer> map2) {
+//	public String insertToMyCart(int userId,int goodsId,int number) {
+//		System.out.println(userId);
+//		System.out.println(goodsId);
+//		System.out.println(number);
+		System.out.println(map2.get("goodsId"));
 		MyCart myCart2 = new MyCart();
-		myCart2.setCar_gooid(goodsId);
-		myCart2.setCar_userid(userId);
-		myCart2.setCar_goonum(number);
+		myCart2.setCar_gooid(map2.get("goodsId"));
+		myCart2.setCar_userid(map2.get("userId"));
+		myCart2.setCar_goonum(map2.get("goodsNumber"));
+		System.out.println(myCart2);
 		boolean insertGoToMyCart = goodsManageService.insertGoToMyCart(myCart2);
 		
 		System.out.println(insertGoToMyCart);
