@@ -144,21 +144,24 @@ public class GoodsManage {
 //		System.out.println(myOrder);
 		Map insertGoToMyOrder = goodsManageService.insertGoToMyOrder(map2);
 //		System.out.println(insertGoToMyOrder);
-		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("flag", insertGoToMyOrder);
-		System.out.println(map);
-		return JSON.toJSONString(map);
+//		Map<String,Object> map = new HashMap<String, Object>();
+//		map.put("data", insertGoToMyOrder);
+		System.out.println(insertGoToMyOrder);
+		return JSON.toJSONString(insertGoToMyOrder);
 	}
 //	修改支付状态
 	@ResponseBody
 	@RequestMapping(value="/updateMyOrderToPay.do",method=RequestMethod.POST)
-//	public List<Goods> Home(@RequestBody Map map) {
-	public String insertToMyOrder(int MyOrderId,int userId,String ord_paystate) {
-		ord_paystate = "已支付";
-		String ord_orderstate = "等待发货";
+	public String updateMyOrderToPay(@RequestBody Map map2) {
+//	public String insertToMyOrder(int MyOrderId,int userId,String ord_paystate) {
+//		ord_paystate = "已支付";
+//		String ord_orderstate = "等待发货";
+		System.out.println(map2);
+		System.out.println(map2.get("OrderId").getClass());
 //		System.out.println(myOrder);
-		boolean updateMyOrderPayState = goodsManageService.updateMyOrderPayState(ord_paystate, ord_orderstate,String.valueOf(MyOrderId));
+		boolean updateMyOrderPayState = goodsManageService.updateMyOrderPayState((String)map2.get("payState"), (String)map2.get("orderState"),String.valueOf(map2.get("OrderId")));
 		System.out.println(updateMyOrderPayState);
+		System.out.println(map2);
 		Map<String,Object> map = new HashMap<String, Object>();
 		map.put("flag", updateMyOrderPayState);
 		System.out.println(map);

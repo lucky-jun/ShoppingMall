@@ -81,6 +81,9 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 		String substring = goodsInf.substring(0,goodsInf.length()-1);
 		System.out.println("商品信息："+substring);
 		System.out.println("商品总价："+sumprice);
+		System.out.println("userID1："+map2.get("userId"));
+		System.out.println("userID2："+Integer.valueOf((String) map2.get("userId")));
+		System.out.println("userID3："+Integer.valueOf((String) map2.get("userId")).intValue());
 		
 		MyOrder myOrder = new MyOrder(Integer.valueOf((String) map2.get("userId")).intValue(), substring, sumprice, "订单未支付", "等待支付", new Date());
 		
