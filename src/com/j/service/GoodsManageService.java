@@ -28,7 +28,7 @@ public interface GoodsManageService {
 		//购物车结算
 	
 		//加入我的订单
-	public Map insertGoToMyOrder(MyOrder myOrder);
+	public Map insertGoToMyOrder(Map map);
 		//我的订单点击支付
 	public boolean updateMyOrderPayState(String ord_paystate,String ord_orderstate,String ord_id);
 

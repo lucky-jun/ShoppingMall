@@ -1,9 +1,12 @@
 package com.j.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+//import com.alibaba.fastjson.JSON;
+//import com.alibaba.fastjson.JSONArray;
+//import com.alibaba.fastjson.JSONObject;
 import com.j.pojo.Goods;
 import com.j.pojo.MyCart;
 import com.j.pojo.MyOrder;
@@ -55,10 +62,10 @@ public class GoodsManage {
 //	获取购物车商品展示
 	@ResponseBody
 	@RequestMapping(value="/queryToCart.do",method=RequestMethod.POST)
-//	public List<Goods> Home(@RequestBody int userId) {
-	public String Cart(int userId) {
+	public String queryToCart(@RequestBody Map<String,Integer> userId) {
+//	public String Cart(int userId) {
 		System.out.println(userId);
-		List<ToCart> queryMyCartByUserAll = goodsManageService.queryMyCartByUserAll(userId);
+		List<ToCart> queryMyCartByUserAll = goodsManageService.queryMyCartByUserAll(userId.get("userID"));
 		
 		System.out.println(queryMyCartByUserAll);
 		Map<String,Object> map = new HashMap<String, Object>();
@@ -105,17 +112,42 @@ public class GoodsManage {
 //	加入我的订单
 	@ResponseBody
 	@RequestMapping(value="/insertToMyOrder.do",method=RequestMethod.POST)
-//	public List<Goods> Home(@RequestBody Map map) {
-	public String insertToMyOrder(int ord_userid,String ord_goodsinf,double ord_sumprice,String ord_paystate,String ord_orderstate) {
-		
-		MyOrder myOrder = new MyOrder(ord_userid, ord_userid, ord_goodsinf, ord_sumprice, ord_paystate, ord_orderstate, new Date());
-		System.out.println(myOrder);
-		Map insertGoToMyOrder = goodsManageService.insertGoToMyOrder(myOrder);
-		System.out.println(insertGoToMyOrder);
-//		Map<String,Object> map = new HashMap<String, Object>();
-//		map.put("flag", insertGoToMyOrder);
-//		System.out.println(map);
-		return JSON.toJSONString(insertGoToMyOrder);
+	public String insertToMyOrder(@RequestBody Map<String,Object> map2) {
+//	public String insertToMyOrder(int ord_userid,String ord_goodsinf,double ord_sumprice,String ord_paystate,String ord_orderstate) {
+
+//		System.out.println(map2);
+//		//将Array中的对象值取出
+//		double sumprice = 0;
+//		String goodsInf = "";
+//		List list = (List) map2.get("goods");
+//		for(int i =0 ;i<list.size();i++) {
+//		    JSONArray jsonArray = new JSONArray(list);  
+//		    int id =(int) jsonArray.getJSONObject(i).get("goo_id");//得到第一个的id 
+//		    int number =(int) jsonArray.getJSONObject(i).get("number");//得到第一个的number 
+//		    String substring = jsonArray.getJSONObject(i).get("sump").getClass().toString().substring(16);
+//		    double doubleValue = 0;
+//		    if(substring.equals("Integer")) {
+//			    doubleValue = ((Integer) jsonArray.getJSONObject(0).get("sump")).doubleValue();//得到第一个的name  
+//		    }else{
+//		    	doubleValue = ((Double) jsonArray.getJSONObject(0).get("sump")).doubleValue();//得到第一个的name  
+//		    }
+//		    sumprice+=doubleValue;
+//		    goodsInf+=id+"-"+number+",";
+//		}
+//		String substring = goodsInf.substring(0,goodsInf.length()-1);
+//		System.out.println("商品信息："+substring);
+//		System.out.println("商品总价："+sumprice);
+//		map2.get("userId").getClass()
+//		Integer.valueOf((String) map2.get("userId")).getClass();
+//		System.out.println(Integer.valueOf((String) map2.get("userId")).intValue());
+//		MyOrder myOrder = new MyOrder(ord_userid, ord_userid, ord_goodsinf, ord_sumprice, ord_paystate, ord_orderstate, new Date());
+//		System.out.println(myOrder);
+		Map insertGoToMyOrder = goodsManageService.insertGoToMyOrder(map2);
+//		System.out.println(insertGoToMyOrder);
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("flag", insertGoToMyOrder);
+		System.out.println(map);
+		return JSON.toJSONString(map);
 	}
 //	修改支付状态
 	@ResponseBody
@@ -132,4 +164,19 @@ public class GoodsManage {
 		System.out.println(map);
 		return JSON.toJSONString(map);
 	}
+//	浏览购物车
+//	@ResponseBody
+//	@RequestMapping(value="/queryToCart.do",method=RequestMethod.POST)
+////	public String queryToCart(@RequestBody Map map2) {
+//	public String queryToCart(String userId) {
+////		ord_paystate = "已支付";
+////		String ord_orderstate = "等待发货";
+//		System.out.println(userId); 
+////		boolean updateMyOrderPayState = goodsManageService.updateMyOrderPayState(ord_paystate, ord_orderstate,String.valueOf(MyOrderId));
+////		System.out.println(updateMyOrderPayState);
+//		Map<String,Object> map = new HashMap<String, Object>();
+////		map.put("flag", updateMyOrderPayState);
+//		System.out.println(map);
+//		return JSON.toJSONString(map);
+//	}
 }

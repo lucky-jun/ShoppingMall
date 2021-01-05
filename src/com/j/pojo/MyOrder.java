@@ -61,6 +61,17 @@ public class MyOrder {
 	public MyOrder() {
 		super();
 	}
+	
+	public MyOrder(int ord_userid, String ord_goodsinf, double ord_sumprice, String ord_paystate, String ord_orderstate,
+			Date ord_createtime) {
+		super();
+		this.ord_userid = ord_userid;
+		this.ord_goodsinf = ord_goodsinf;
+		this.ord_sumprice = ord_sumprice;
+		this.ord_paystate = ord_paystate;
+		this.ord_orderstate = ord_orderstate;
+		this.ord_createtime = ord_createtime;
+	}
 	public MyOrder(int ord_id, int ord_userid, String ord_goodsinf, double ord_sumprice, String ord_paystate,
 			String ord_orderstate, Date ord_createtime) {
 		super();
