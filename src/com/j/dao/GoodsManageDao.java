@@ -43,8 +43,9 @@ public interface GoodsManageDao {
 		//批量ID查询：购买商品等使用 ,传入List类型
 	public List<Goods> queryGoodsByListID(List<Integer> goodsid);
 	// 购物车查询:MyCart
-		// 用户购物车查询，int 传入用户ID 
+		// 用户购物车查询，int 传入用户ID
 	public List<ToCart> queryMyCartByUserAll(@Param("car_userid")int car_userid);
+	public List<MyCart> queryMyCartOneGoodsByUserID(@Param("car_userid")int car_userid,@Param("car_gooid")int car_gooid);
 		// 员工查询 
 	public List<MyCart> queryMyCartAll();
 	// 订单查询 ：MyOrder
@@ -69,6 +70,7 @@ public interface GoodsManageDao {
 		// 使用Map传值
 	public int updateMyCartToNumberByUidGid(Map<String ,Object> map);
 	public int updateMyOrderPayState(@Param("ord_paystate") String ord_paystate,@Param("ord_orderstate") String ord_orderstate,@Param("ord_id") String ord_id);
+	public int updataMyCartToNumberinOne(Map<String ,Object> map);
 	
 	
 }

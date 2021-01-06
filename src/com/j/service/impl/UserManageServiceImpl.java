@@ -112,6 +112,9 @@ public class UserManageServiceImpl implements UserManageService{
 		map.put("lastTime",dateFormat.DateUtiltoString(pw.getPwd_login_data()));
 		if(pw.getPwd_power()==10) {
 			User queryByUser = userManageDao.queryByUser(pw.getPwd_id());
+			System.out.println("pw.getPwd_id():"+pw.getPwd_id());
+			System.out.println("queryByUser:"+queryByUser);
+			System.out.println("getUser_id():"+queryByUser.getUser_id());
 			map.put("userID", queryByUser.getUser_id());
 			map.put("power", pw.getPwd_power());
 			map.put("flag", true);

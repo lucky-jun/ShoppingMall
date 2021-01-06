@@ -1,23 +1,23 @@
 package com.j.pojo;
 
 public class ToCart {
-	private int goodsId;
-	private int userId;
+	private int car_gooid;
+	private int car_userid;
 	private int number;
-	private double price;
-	private String name;
-	private String img;
-	public int getGoodsId() {
-		return goodsId;
+	private double goo_selling_price;
+	private String goo_name;
+	private String goo_image;
+	public int getCar_gooid() {
+		return car_gooid;
 	}
-	public void setGoodsId(int goodsId) {
-		this.goodsId = goodsId;
+	public void setCar_gooid(int car_gooid) {
+		this.car_gooid = car_gooid;
 	}
-	public int getUserId() {
-		return userId;
+	public int getCar_userid() {
+		return car_userid;
 	}
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setCar_userid(int car_userid) {
+		this.car_userid = car_userid;
 	}
 	public int getNumber() {
 		return number;
@@ -25,39 +25,42 @@ public class ToCart {
 	public void setNumber(int number) {
 		this.number = number;
 	}
-	public double getPrice() {
-		return price;
+	public double getGoo_selling_price() {
+		return goo_selling_price;
 	}
-	public void setPrice(double price) {
-		this.price = price;
+	public void setGoo_selling_price(double goo_selling_price) {
+		this.goo_selling_price = goo_selling_price;
 	}
-	public String getName() {
-		return name;
+	public String getGoo_name() {
+		return goo_name;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setGoo_name(String goo_name) {
+		this.goo_name = goo_name;
 	}
-	public String getImg() {
-		return img;
+	public String getGoo_image() {
+		return goo_image;
 	}
-	public void setImg(String img) {
-		this.img = img;
+	public void setGoo_image(String goo_image) {
+		this.goo_image = goo_image;
 	}
 	@Override
 	public String toString() {
-		return "[goodsId=" + goodsId + ", userId=" + userId + ", number=" + number + ", price=" + price
-				+ ", name=" + name + ", img=" + img + "]";
+		return "ToCart [car_gooid=" + car_gooid + ", car_userid=" + car_userid + ", number=" + number
+				+ ", goo_selling_price=" + goo_selling_price + ", goo_name=" + goo_name + ", goo_image=" + goo_image
+				+ "]";
 	}
 	public ToCart() {
 		super();
 	}
-	public ToCart(int goodsId, int userId, int number, double price, String name, String img) {
+	public ToCart(int car_gooid, int car_userid, int number, double goo_selling_price, String goo_name,
+			String goo_image) {
 		super();
-		this.goodsId = goodsId;
-		this.userId = userId;
+		this.car_gooid = car_gooid;
+		this.car_userid = car_userid;
 		this.number = number;
-		this.price = price;
-		this.name = name;
-		this.img = img;
+		this.goo_selling_price = goo_selling_price;
+		this.goo_name = goo_name;
+		this.goo_image = goo_image;
 	}
+	
 }

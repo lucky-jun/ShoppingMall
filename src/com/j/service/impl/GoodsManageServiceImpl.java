@@ -53,9 +53,29 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 //	添加商品到购物车
 	@Override
 	public boolean insertGoToMyCart(MyCart mycart) {
-		int insertGoToMyCart = goodsManageDao.insertGoToMyCart(mycart);
-		
-		return insertGoToMyCart>0;
+		System.out.println("添加商品到购物车");
+		System.out.println(mycart);
+		List<MyCart> queryMyCartOneGoodsByUserID = goodsManageDao.queryMyCartOneGoodsByUserID(mycart.getCar_userid(), mycart.getCar_gooid());
+//		System.out.println(queryMyCartOneGoodsByUserID);
+//		System.out.println(queryMyCartOneGoodsByUserID.isEmpty());
+//		为空直接插入
+		if(queryMyCartOneGoodsByUserID.isEmpty()) {
+			System.out.println("无该产品");
+			int insertGoToMyCart = goodsManageDao.insertGoToMyCart(mycart);
+			return insertGoToMyCart>0;
+		}else {
+//			不为空加入商品数量{car_goonum} where car_userid=#{car_userid} and car_gooid=#{car_gooid}
+			System.out.println("有该产品");
+			System.out.println(queryMyCartOneGoodsByUserID.get(0).getCar_goonum());
+			Map<String,Object> map = new HashMap<String, Object>();
+			map.put("car_goonum", queryMyCartOneGoodsByUserID.get(0).getCar_goonum()+1);
+			map.put("car_userid", mycart.getCar_userid());
+			map.put("car_gooid", mycart.getCar_gooid());
+			System.out.println(mycart.getCar_goonum());
+			System.out.println(map);
+			int updataMyCartToNumberinOne = goodsManageDao.updataMyCartToNumberinOne(map);
+			return updataMyCartToNumberinOne>0;
+		}
 	}
 //	加入我的订单
 	@Override
@@ -63,19 +83,37 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 
 		double sumprice = 0;
 		String goodsInf = "";
+		System.out.println(map2);
 		List list = (List) map2.get("goods");
 		for(int i =0 ;i<list.size();i++) {
+			System.out.println(list);
 		    JSONArray jsonArray = new JSONArray(list);  
-		    int id =(int) jsonArray.getJSONObject(i).get("goo_id");//得到第一个的id 
+		    System.out.println(jsonArray.getJSONObject(i).get("car_gooid")==null);
+		    System.out.println(jsonArray.getJSONObject(i).get("goo_id"));
+		    int id = 0;
+		    if(jsonArray.getJSONObject(i).get("car_gooid")!=null) {
+		    	//从购物车获取订单商品ID
+		    	id =(int) jsonArray.getJSONObject(i).get("car_gooid");//得到第一个的id 
+		    }else {
+		    	//从商品详情获取订单商品ID
+		    	id =(int) jsonArray.getJSONObject(i).get("goo_id");//得到第一个的id 
+		    }
 		    int number =(int) jsonArray.getJSONObject(i).get("number");//得到第一个的number 
+		    System.out.println("-----------------------------------------------------------------");
 		    String substring = jsonArray.getJSONObject(i).get("sump").getClass().toString().substring(16);
+		    System.out.println(jsonArray.getJSONObject(i).get("sump").getClass().toString());
+		    System.out.println(jsonArray.getJSONObject(i).get("sump").getClass().toString().substring(16));
 		    double doubleValue = 0;
 		    if(substring.equals("Integer")) {
-			    doubleValue = ((Integer) jsonArray.getJSONObject(0).get("sump")).doubleValue();//得到第一个的name  
+			    doubleValue = ((Integer) jsonArray.getJSONObject(i).get("sump")).doubleValue();//得到第一个的name  
 		    }else{
-		    	doubleValue = ((Double) jsonArray.getJSONObject(0).get("sump")).doubleValue();//得到第一个的name  
+		    	doubleValue = ((Double) jsonArray.getJSONObject(i).get("sump")).doubleValue();//得到第一个的name  
 		    }
+		    System.out.println(sumprice);
+		    System.out.println(doubleValue);
 		    sumprice+=doubleValue;
+		    System.out.println(sumprice);
+		    
 		    goodsInf+=id+"-"+number+",";
 		}
 		String substring = goodsInf.substring(0,goodsInf.length()-1);
