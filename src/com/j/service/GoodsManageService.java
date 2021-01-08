@@ -31,6 +31,8 @@ public interface GoodsManageService {
 	public Map insertGoToMyOrder(Map map);
 		//我的订单点击支付
 	public boolean updateMyOrderPayState(String ord_paystate,String ord_orderstate,String ord_id);
+		//查询我的订单
+	public Map<String,Object>queryMyOrderByUserID(int userId,int page,int limit);
 
 		//点击收货
 	

@@ -50,7 +50,7 @@ public interface GoodsManageDao {
 	public List<MyCart> queryMyCartAll();
 	// 订单查询 ：MyOrder
 		//用户订单查询 
-	public List<MyOrder> queryMyOrderByUserID(@Param("ord_userid")int ord_userid);
+	public List<MyOrder> queryMyOrderByUserID(@Param("ord_userid")int ord_userid,@Param("page")int page,@Param("number")int number);
 		//查询用户最新订单
 	public int queryMyOrderNewByUserID(@Param("ord_userid")int ord_userid);
 		// 员工订单查询

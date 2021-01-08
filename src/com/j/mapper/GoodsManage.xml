@@ -107,9 +107,11 @@
 		<!-- 批量ID查询：购买商品等使用 ,传入List类型-->
 	<select id="queryGoodsByListID" parameterType="java.util.List" resultType="com.j.pojo.Goods">
 		select * from Goods where goo_id in
+		<trim prefix="(" suffix=")" suffixOverrides=",">
 		<foreach collection="list" item="id" index="index" separator=",">
 			#{id}
 		</foreach>
+		</trim>
 	</select>
 	<!-- 购物车查询:MyCart -->
 		<!-- 用户购物车查询，int 传入用户ID -->
@@ -128,7 +130,7 @@
 	<!-- 订单查询 ：MyOrder-->
 		<!-- 用户订单查询 -->
 	<select id="queryMyOrderByUserID" parameterType="int" resultType="com.j.pojo.MyOrder">
-		select * from MyOrder where ord_userid=#{ord_userid}
+		select * from MyOrder where ord_userid=#{ord_userid} limit #{page},#{number}
 	</select>
 		<!-- 获取最新订单 -->
 	<select id="queryMyOrderNewByUserID" parameterType="int" resultType="int">

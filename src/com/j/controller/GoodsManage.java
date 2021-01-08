@@ -167,19 +167,24 @@ public class GoodsManage {
 		System.out.println(map);
 		return JSON.toJSONString(map);
 	}
-//	浏览购物车
-//	@ResponseBody
-//	@RequestMapping(value="/queryToCart.do",method=RequestMethod.POST)
-////	public String queryToCart(@RequestBody Map map2) {
-//	public String queryToCart(String userId) {
-////		ord_paystate = "已支付";
-////		String ord_orderstate = "等待发货";
-//		System.out.println(userId); 
-////		boolean updateMyOrderPayState = goodsManageService.updateMyOrderPayState(ord_paystate, ord_orderstate,String.valueOf(MyOrderId));
-////		System.out.println(updateMyOrderPayState);
+//	浏览我的订单
+	@ResponseBody
+	@RequestMapping(value="/queryToMyOrder.do",method=RequestMethod.POST)
+	public String queryToMyOrder(@RequestBody Map map2) {
+//	public String insertToMyOrder(int MyOrderId,int userId,String ord_paystate) {
+//		ord_paystate = "已支付";
+//		String ord_orderstate = "等待发货";
+		System.out.println(map2);
+		System.out.println(map2.get("userId").getClass());
+		System.out.println(map2.get("page").getClass());
+		System.out.println(map2.get("limit").getClass());
+//		System.out.println(myOrder);
+		Map<String, Object> queryMyOrderByUserID = goodsManageService.queryMyOrderByUserID(Integer.valueOf((String)map2.get("userId")),Integer.valueOf(map2.get("page").toString()), Integer.valueOf(map2.get("limit").toString()));
+		System.out.println(queryMyOrderByUserID);
+//		System.out.println(map2);
 //		Map<String,Object> map = new HashMap<String, Object>();
-////		map.put("flag", updateMyOrderPayState);
+//		map.put("flag", queryMyOrderByUserID);
 //		System.out.println(map);
-//		return JSON.toJSONString(map);
-//	}
+		return JSON.toJSONString(queryMyOrderByUserID);
+	}
 }
