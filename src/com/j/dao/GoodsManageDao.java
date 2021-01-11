@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.j.pojo.Goods;
+import com.j.pojo.LookOrder;
 import com.j.pojo.MyCart;
 import com.j.pojo.MyOrder;
 import com.j.pojo.OrderHistory;
@@ -42,6 +43,7 @@ public interface GoodsManageDao {
 	public Goods queryGoodsByID(@Param("goo_id")int goo_id);
 		//批量ID查询：购买商品等使用 ,传入List类型
 	public List<Goods> queryGoodsByListID(List<Integer> goodsid);
+	public List<LookOrder> queryGoodsLookOrderByListID(List<Integer> goodsid);
 	// 购物车查询:MyCart
 		// 用户购物车查询，int 传入用户ID
 	public List<ToCart> queryMyCartByUserAll(@Param("car_userid")int car_userid);

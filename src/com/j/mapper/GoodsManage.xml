@@ -113,6 +113,15 @@
 		</foreach>
 		</trim>
 	</select>
+		<!-- 批量ID查询：查看订单使用 ,传入List类型-->
+	<select id="queryGoodsLookOrderByListID" parameterType="java.util.List" resultType="com.j.pojo.LookOrder">
+		select * from Goods where goo_id in
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		<foreach collection="list" item="id" index="index" separator=",">
+			#{id}
+		</foreach>
+		</trim>
+	</select>
 	<!-- 购物车查询:MyCart -->
 		<!-- 用户购物车查询，int 传入用户ID -->
 	<select id="queryMyCartByUserAll" parameterType="int" resultType="com.j.pojo.ToCart">

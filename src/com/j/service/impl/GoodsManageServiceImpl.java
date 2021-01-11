@@ -1,5 +1,6 @@
 package com.j.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import com.j.pojo.MyCart;
 import com.j.pojo.MyOrder;
 import com.j.pojo.ToCart;
 import com.j.service.GoodsManageService;
+import com.j.util.DateFormat;
 @Service
 public class GoodsManageServiceImpl implements GoodsManageService {
 	
@@ -159,29 +161,63 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 				System.out.println("订单编号:"+queryMyOrderByUserID.get(i).getOrd_id());
 				System.out.println("split:"+split.toString());
 				System.out.println("split.length:"+split.length);
+				//订单IDList
 				List<Integer> listOrderById = new ArrayList<Integer>();
-				
+				//相应订单商品Number
+				List<Integer> listOrderBynumber = new ArrayList<Integer>();
+				//将订单获取到的商品ID和商品数量分离
 				for(int a=0;a<split.length;a++) {
 //					System.out.println("split[i]:"+split[a]);
 					String[] split2 = split[a].split("-");
 					listOrderById.add(Integer.valueOf(split2[0]));
+					listOrderBynumber.add(Integer.valueOf(split2[1]));
 				}
 				System.out.println(listOrderById);
-				//查询语句
-				List<Goods> queryGoodsByListID = goodsManageDao.queryGoodsByListID(listOrderById);
-				map2.put(String.valueOf(queryMyOrderByUserID.get(i).getOrd_id()), queryGoodsByListID);
+				//查询语句，获取订单中商品的相关信息
+				List<LookOrder> queryGoodsLookOrderByListID = goodsManageDao.queryGoodsLookOrderByListID(listOrderById);
+				System.out.println("-------------------");
+				System.out.println(queryGoodsLookOrderByListID);
+				System.out.println(queryGoodsLookOrderByListID.size());
+				System.out.println(listOrderBynumber);
+				for(int a=0;a<queryGoodsLookOrderByListID.size();a++) {
+					//将购买的商品数量写入
+					queryGoodsLookOrderByListID.get(a).setNumber(listOrderBynumber.get(a));
+					queryGoodsLookOrderByListID.get(a).setSumprice(listOrderBynumber.get(a)*queryGoodsLookOrderByListID.get(a).getGoo_selling_price());
+					queryGoodsLookOrderByListID.get(a).setPaystate(queryMyOrderByUserID.get(i).getOrd_paystate());
+					queryGoodsLookOrderByListID.get(a).setOrderstate(queryMyOrderByUserID.get(i).getOrd_orderstate());
+					queryGoodsLookOrderByListID.get(a).setCreattime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(queryMyOrderByUserID.get(i).getOrd_createtime()));
+					System.out.println(queryGoodsLookOrderByListID.get(a));
+				}
+				//ord_sumprice=2.5, ord_paystate=订单未支付, ord_orderstate=等待支付, ord_createtime=Tue Jan 05 20:17:59 CST 2021
+				//以订单号添加入map集合
+				map2.put(String.valueOf(queryMyOrderByUserID.get(i).getOrd_id()), queryGoodsLookOrderByListID);
+//				map2.put("ord_sumprice", queryMyOrderByUserID.get(i).getOrd_sumprice());
+//				map2.put("ord_paystate", queryMyOrderByUserID.get(i).getOrd_paystate());
+//				map2.put("ord_orderstate", queryMyOrderByUserID.get(i).getOrd_orderstate());
+				
+				System.out.println("++++++++++++++++:"+map2);
 //				listid.addAll(listOrderById);
 //				listnumber.add(Integer.valueOf(split2[1]));
 			}
-		/*map2:{
-		 * {1=[[goo_id=5, goo_name=优酸乳, goo_stock=100, goo_buying_price=1.0, goo_selling_price=2.5, goo_supid=3, goo_type=奶制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]],
-		 *  2=[[goo_id=4, goo_name=安德玛X02, goo_stock=50, goo_buying_price=899.0, goo_selling_price=999.0, goo_supid=5, goo_type=进口服装, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]],
-		 *  3=[[goo_id=6, goo_name=百草味酸奶, goo_stock=100, goo_buying_price=2.5, goo_selling_price=4.0, goo_supid=3, goo_type=奶制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]],
-		 *  4=[[goo_id=4, goo_name=安德玛X02, goo_stock=50, goo_buying_price=899.0, goo_selling_price=999.0, goo_supid=5, goo_type=进口服装, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]],
-		 *  15=[[goo_id=5, goo_name=优酸乳, goo_stock=100, goo_buying_price=1.0, goo_selling_price=2.5, goo_supid=3, goo_type=奶制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]], 5=[[goo_id=4, goo_name=安德玛X02, goo_stock=50, goo_buying_price=899.0, goo_selling_price=999.0, goo_supid=5, goo_type=进口服装, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]], 16=[[goo_id=2, goo_name=红萝卜, goo_stock=100, goo_buying_price=1.0, goo_selling_price=2.0, goo_supid=2, goo_type=果蔬, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null], [goo_id=5, goo_name=优酸乳, goo_stock=100, goo_buying_price=1.0, goo_selling_price=2.5, goo_supid=3, goo_type=奶制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null], [goo_id=6, goo_name=百草味酸奶, goo_stock=100, goo_buying_price=2.5, goo_selling_price=4.0, goo_supid=3, goo_type=奶制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null], [goo_id=8, goo_name=哈哈腊鸭, goo_stock=100, goo_buying_price=39.9, goo_selling_price=69.9, goo_supid=1, goo_type=肉制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]]}
-		 *    }
+		/*
+		 *  map2:{
+		 *  1=[[goo_id=5, goo_name=优酸乳, goo_stock=100, goo_buying_price=1.0, goo_selling_price=2.5, goo_supid=3, goo_type=奶制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]], 
+		 *  2=[[goo_id=4, goo_name=安德玛X02, goo_stock=50, goo_buying_price=899.0, goo_selling_price=999.0, goo_supid=5, goo_type=进口服装, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]], 
+		 *  3=[[goo_id=6, goo_name=百草味酸奶, goo_stock=100, goo_buying_price=2.5, goo_selling_price=4.0, goo_supid=3, goo_type=奶制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]], 
+		 *  4=[[goo_id=4, goo_name=安德玛X02, goo_stock=50, goo_buying_price=899.0, goo_selling_price=999.0, goo_supid=5, goo_type=进口服装, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]], 
+		 *  15=[[goo_id=5, goo_name=优酸乳, goo_stock=100, goo_buying_price=1.0, goo_selling_price=2.5, goo_supid=3, goo_type=奶制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]], 
+		 *  5=[[goo_id=4, goo_name=安德玛X02, goo_stock=50, goo_buying_price=899.0, goo_selling_price=999.0, goo_supid=5, goo_type=进口服装, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]], 
+		 *  16=[
+		 *   [goo_id=2, goo_name=红萝卜, goo_stock=100, goo_buying_price=1.0, goo_selling_price=2.0, goo_supid=2, goo_type=果蔬, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null],
+		 *   [goo_id=5, goo_name=优酸乳, goo_stock=100, goo_buying_price=1.0, goo_selling_price=2.5, goo_supid=3, goo_type=奶制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null],
+		 *   [goo_id=6, goo_name=百草味酸奶, goo_stock=100, goo_buying_price=2.5, goo_selling_price=4.0, goo_supid=3, goo_type=奶制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null],
+		 *   [goo_id=8, goo_name=哈哈腊鸭, goo_stock=100, goo_buying_price=39.9, goo_selling_price=69.9, goo_supid=1, goo_type=肉制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]]}  
 		 *    
-		 *    
+		 *    [
+		 *    LookOrder[goo_id=2, goo_name=红萝卜, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_selling_price=2.0, number=0.0, sumprice=0.0],
+		 *    LookOrder[goo_id=5, goo_name=优酸乳, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_selling_price=2.5, number=0.0, sumprice=0.0],
+		 *    LookOrder[goo_id=6, goo_name=百草味酸奶, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_selling_price=4.0, number=0.0, sumprice=0.0],
+		 *    LookOrder[goo_id=8, goo_name=哈哈腊鸭, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_selling_price=69.9, number=0.0, sumprice=0.0]]
 		 *    
 		 *    
 		 *    
@@ -214,7 +250,7 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 		if(queryMyOrderByUserID.isEmpty()) {
 			map.put("flag", false);
 		}else {
-//			map.put("data", listorder);
+			map.put("data", map2);
 			map.put("flag", true);
 		}
 		return map;
