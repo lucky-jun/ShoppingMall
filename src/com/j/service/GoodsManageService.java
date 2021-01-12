@@ -34,6 +34,8 @@ public interface GoodsManageService {
 		//查询我的订单
 	public Map<String,Object>queryMyOrderByUserID(int userId,int page,int limit);
 
+		//取消订单
+	public Map<String,Object> deleteToMyOrderByUser(Map<String,Object> map);
 		//点击收货
 	
 	//员工功能

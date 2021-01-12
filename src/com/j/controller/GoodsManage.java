@@ -187,4 +187,24 @@ public class GoodsManage {
 //		System.out.println(map);
 		return JSON.toJSONString(queryMyOrderByUserID);
 	}
+//	用户取消订单
+	@ResponseBody
+	@RequestMapping(value="/deleteToMyOrderByUser.do",method=RequestMethod.POST)
+	public String deleteToMyOrderByUser(@RequestBody Map map2) {
+		System.out.println(map2);
+//		System.out.println(map2.get("userId").getClass());
+//		System.out.println(map2.get("page").getClass());
+//		System.out.println(map2.get("limit").getClass());
+//		System.out.println(myOrder);
+//		goodsManageService.deleteToMyOrderByUser(map2);
+		Map deleteToMyOrderByUser = goodsManageService.deleteToMyOrderByUser(map2);
+//		Map<String, Object> queryMyOrderByUserID = goodsManageService.queryMyOrderByUserID(Integer.valueOf((String)map2.get("userId")),Integer.valueOf(map2.get("page").toString()), Integer.valueOf(map2.get("limit").toString()));
+//		System.out.println(queryMyOrderByUserID);
+//		System.out.println(map2);
+//		Map<String,Object> map = new HashMap<String, Object>();
+//		map.put("flag", true);
+//		System.out.println(map);
+		System.out.println("deleteToMyOrderByUser:"+deleteToMyOrderByUser);
+		return JSON.toJSONString(deleteToMyOrderByUser);
+	}
 }

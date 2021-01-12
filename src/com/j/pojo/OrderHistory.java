@@ -2,11 +2,14 @@ package com.j.pojo;
 
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
+@Component
 public class OrderHistory {
 	private int his_id;
 	private int his_userid;
 	private String his_goodsinf;
 	private double his_sumprice;
+	private String his_orderstate;
 	private Date his_starttime;
 	private Date his_stoptime;
 	public int getHis_id() {
@@ -33,6 +36,12 @@ public class OrderHistory {
 	public void setHis_sumprice(double his_sumprice) {
 		this.his_sumprice = his_sumprice;
 	}
+	public String getHis_orderstate() {
+		return his_orderstate;
+	}
+	public void setHis_orderstate(String his_orderstate) {
+		this.his_orderstate = his_orderstate;
+	}
 	public Date getHis_starttime() {
 		return his_starttime;
 	}
@@ -48,19 +57,20 @@ public class OrderHistory {
 	@Override
 	public String toString() {
 		return "OrderHistory [his_id=" + his_id + ", his_userid=" + his_userid + ", his_goodsinf=" + his_goodsinf
-				+ ", his_sumprice=" + his_sumprice + ", his_starttime=" + his_starttime + ", his_stoptime="
-				+ his_stoptime + "]";
+				+ ", his_sumprice=" + his_sumprice + ", his_orderstate=" + his_orderstate + ", his_starttime="
+				+ his_starttime + ", his_stoptime=" + his_stoptime + "]";
 	}
 	public OrderHistory() {
 		super();
 	}
-	public OrderHistory(int his_id, int his_userid, String his_goodsinf, double his_sumprice, Date his_starttime,
-			Date his_stoptime) {
+	public OrderHistory(int his_id, int his_userid, String his_goodsinf, double his_sumprice, String his_orderstate,
+			Date his_starttime, Date his_stoptime) {
 		super();
 		this.his_id = his_id;
 		this.his_userid = his_userid;
 		this.his_goodsinf = his_goodsinf;
 		this.his_sumprice = his_sumprice;
+		this.his_orderstate = his_orderstate;
 		this.his_starttime = his_starttime;
 		this.his_stoptime = his_stoptime;
 	}

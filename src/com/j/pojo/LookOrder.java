@@ -2,6 +2,7 @@ package com.j.pojo;
 
 public class LookOrder {
 	private int goo_id;
+	private int ord_id;
 	private String goo_name;
 	private String goo_image;
 	private double goo_selling_price;
@@ -15,6 +16,12 @@ public class LookOrder {
 	}
 	public void setGoo_id(int goo_id) {
 		this.goo_id = goo_id;
+	}
+	public int getOrd_id() {
+		return ord_id;
+	}
+	public void setOrd_id(int ord_id) {
+		this.ord_id = ord_id;
 	}
 	public String getGoo_name() {
 		return goo_name;
@@ -66,17 +73,18 @@ public class LookOrder {
 	}
 	@Override
 	public String toString() {
-		return "LookOrder [goo_id=" + goo_id + ", goo_name=" + goo_name + ", goo_image=" + goo_image
-				+ ", goo_selling_price=" + goo_selling_price + ", number=" + number + ", sumprice=" + sumprice
-				+ ", paystate=" + paystate + ", orderstate=" + orderstate + ", creattime=" + creattime + "]";
+		return "LookOrder [goo_id=" + goo_id + ", ord_id=" + ord_id + ", goo_name=" + goo_name + ", goo_image="
+				+ goo_image + ", goo_selling_price=" + goo_selling_price + ", number=" + number + ", sumprice="
+				+ sumprice + ", paystate=" + paystate + ", orderstate=" + orderstate + ", creattime=" + creattime + "]";
 	}
 	public LookOrder() {
 		super();
 	}
-	public LookOrder(int goo_id, String goo_name, String goo_image, double goo_selling_price, int number,
+	public LookOrder(int goo_id, int ord_id, String goo_name, String goo_image, double goo_selling_price, int number,
 			double sumprice, String paystate, String orderstate, String creattime) {
 		super();
 		this.goo_id = goo_id;
+		this.ord_id = ord_id;
 		this.goo_name = goo_name;
 		this.goo_image = goo_image;
 		this.goo_selling_price = goo_selling_price;

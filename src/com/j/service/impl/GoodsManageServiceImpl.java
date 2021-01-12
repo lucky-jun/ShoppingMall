@@ -16,6 +16,7 @@ import com.j.pojo.Goods;
 import com.j.pojo.LookOrder;
 import com.j.pojo.MyCart;
 import com.j.pojo.MyOrder;
+import com.j.pojo.OrderHistory;
 import com.j.pojo.ToCart;
 import com.j.service.GoodsManageService;
 import com.j.util.DateFormat;
@@ -24,6 +25,9 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 	
 	@Autowired
 	private GoodsManageDao goodsManageDao;
+	@Autowired
+	private OrderHistory orderHistory;
+	
 	
 //功能
 	//用户功能：
@@ -186,6 +190,7 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 					queryGoodsLookOrderByListID.get(a).setPaystate(queryMyOrderByUserID.get(i).getOrd_paystate());
 					queryGoodsLookOrderByListID.get(a).setOrderstate(queryMyOrderByUserID.get(i).getOrd_orderstate());
 					queryGoodsLookOrderByListID.get(a).setCreattime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(queryMyOrderByUserID.get(i).getOrd_createtime()));
+					queryGoodsLookOrderByListID.get(a).setOrd_id(queryMyOrderByUserID.get(i).getOrd_id());
 					System.out.println(queryGoodsLookOrderByListID.get(a));
 				}
 				//ord_sumprice=2.5, ord_paystate=订单未支付, ord_orderstate=等待支付, ord_createtime=Tue Jan 05 20:17:59 CST 2021
@@ -254,6 +259,49 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 			map.put("flag", true);
 		}
 		return map;
+	}
+	//用户取消订单
+	//未开启事务
+	@Override
+	public Map<String, Object> deleteToMyOrderByUser(Map<String, Object> map) {
+		System.out.println("进入service");
+//		{MyOrderId=18, UserId=6}
+		System.out.println(map);
+		//获取订单信息
+		List<MyOrder> queryMyOrderByOrdid = goodsManageDao.queryMyOrderByOrdid((Integer)map.get("MyOrderId"));
+		System.out.println(queryMyOrderByOrdid);
+		/*
+		 * [ord_id=18, ord_userid=6, ord_goodsinf=8-2,2-2,5-1, ord_sumprice=146.3,
+		 * ord_paystate=订单未支付, ord_orderstate=等待支付, ord_createtime=Tue Jan 12 11:05:03
+		 * CST 2021]
+		 */
+		//将获取插入历史订单表
+		orderHistory.setHis_goodsinf(queryMyOrderByOrdid.get(0).getOrd_goodsinf());
+		orderHistory.setHis_starttime(queryMyOrderByOrdid.get(0).getOrd_createtime());
+		orderHistory.setHis_stoptime(new Date());
+		orderHistory.setHis_sumprice(queryMyOrderByOrdid.get(0).getOrd_sumprice());
+		orderHistory.setHis_userid(queryMyOrderByOrdid.get(0).getOrd_userid());
+		orderHistory.setHis_orderstate((String)map.get("state"));
+		/*
+		 * OrderHistory [his_id=0, his_userid=6, his_goodsinf=8-2,2-2,5-1,
+		 * his_sumprice=146.3, ord_orderstate=订单已取消, his_starttime=Tue Jan 12 11:05:03
+		 * CST 2021, his_stoptime=Tue Jan 12 12:07:49 CST 2021]
+		 */
+		System.out.println(orderHistory);
+		int insertGoToOrderHistory = goodsManageDao.insertGoToOrderHistory(orderHistory);
+		//删除我的订单
+		Map<String,Object> map3 = new HashMap<String, Object>();
+		if(insertGoToOrderHistory>0) {
+//			#{ord_id} and ord_userid=#{ord_userid}
+			Map<String,Object> map2 = new HashMap<String, Object>();
+			map2.put("ord_id", map.get("MyOrderId"));
+			map2.put("ord_userid", Integer.valueOf((String)map.get("UserId")));
+			int deleteToMyOrder = goodsManageDao.deleteToMyOrder(map2);
+			map3.put("flag", deleteToMyOrder>0);
+		}else {
+			map3.put("flag", false);
+		}
+		return map3;
 	}
 
 }

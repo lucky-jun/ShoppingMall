@@ -43,8 +43,8 @@
 	</insert>
 	<!-- 添加商品到OrderHistory -->
 	<insert id="insertGoToOrderHistory" parameterType="com.j.pojo.OrderHistory">
-		insert into OrderHistory(his_userid,his_goodsinf,his_sumprice,his_starttime,his_stoptime) 
-		values(#{his_userid},#{his_goodsinf},#{his_sumprice},#{his_starttime},#{his_stoptime})
+		insert into OrderHistory(his_userid,his_goodsinf,his_sumprice,his_starttime,his_stoptime,his_orderstate) 
+		values(#{his_userid},#{his_goodsinf},#{his_sumprice},#{his_starttime},#{his_stoptime},#{his_orderstate})
 	</insert>
 
 <!-- 删 -->
@@ -69,9 +69,8 @@
 		</delete> -->
 	<!-- 删除商品订单中取消或者点击收货:MyOrder ，以map形式传入我的订单中的订单ID和用户ID-->
 		<delete id="deleteToMyOrder" parameterType="Map">
-			delete table from MyOrder ord_id=#{ord_id} and ord_userid=#{ord_userid}
+			delete from MyOrder where ord_id=#{ord_id} and ord_userid=#{ord_userid}
 		</delete>
-
 
 <!-- 查 -->
 	<!-- 厂商查询 -->
