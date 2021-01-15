@@ -9,7 +9,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.j.dao.UserManageDao;
 import com.j.pojo.Department;
@@ -20,9 +23,10 @@ import com.j.pojo.User;
 import com.j.service.UserManageService;
 import com.j.util.DateFormat;
 
+import javafx.print.PageOrientation;
+
 
 @Service
-@Transactional
 public class UserManageServiceImpl implements UserManageService{
 
 	@Autowired
@@ -34,6 +38,7 @@ public class UserManageServiceImpl implements UserManageService{
 
 	
 
+	//用户注册
 	@Override
 	public int insertUserRegist(PasswordTable pawT, User user) {
 		System.out.println("------------------------service:start");
@@ -48,40 +53,51 @@ public class UserManageServiceImpl implements UserManageService{
 		System.out.println(pawT.getPwd_question_one_key());
 		System.out.println(pawT.getPwd_question_two_key());
 		System.out.println("------------------------service:end");
-		//密码插入
-		pawT.setPwd_regist_data(new Date());
-		System.out.println("获取的注册时间："+pawT.getPwd_regist_data());
-		int insertByPasswordTable = userManageDao.insertByPasswordTable(pawT);
-		PasswordTable queryByUsernameAndPassword = userManageDao.queryByUsernameAndPassword(pawT.getPwd_username(), pawT.getPwd_password());
-		//用户插入
-		System.out.println("UID:"+user.getUser_uid());
-		if(user.getUser_uid()==null||user.getUser_uid()=="")user.setUser_uid(Integer.toString(queryByUsernameAndPassword.getPwd_id()));
-		user.setUser_pasid(queryByUsernameAndPassword.getPwd_id());
-		int insertByUser = userManageDao.insertByUser(user);
-		//获取用户ID，创建会员账号
-		int user_id = userManageDao.queryUserByPwdId(queryByUsernameAndPassword.getPwd_id()).getUser_id();
-		int insertByMember = userManageDao.insertByMember(user_id);
-		System.out.println("执行结果1："+insertByPasswordTable);
-		System.out.println("执行结果2："+insertByUser);
-		System.out.println("执行结果3："+insertByMember);
+		try {
+			//密码插入
+			pawT.setPwd_regist_data(new Date());
+			System.out.println("获取的注册时间："+pawT.getPwd_regist_data());
+			int insertByPasswordTable = userManageDao.insertByPasswordTable(pawT);
+			PasswordTable queryByUsernameAndPassword = userManageDao.queryByUsernameAndPassword(pawT.getPwd_username(), pawT.getPwd_password());
+			//用户插入
+			System.out.println("UID:"+user.getUser_uid());
+			if(user.getUser_uid()==null||user.getUser_uid()=="")user.setUser_uid(Integer.toString(queryByUsernameAndPassword.getPwd_id()));
+			user.setUser_pasid(queryByUsernameAndPassword.getPwd_id());
+			int insertByUser = userManageDao.insertByUser(user);
+			//获取用户ID，创建会员账号
+			int user_id = userManageDao.queryUserByPwdId(queryByUsernameAndPassword.getPwd_id()).getUser_id();
+			int insertByMember = userManageDao.insertByMember(user_id);
+			System.out.println("执行结果1："+insertByPasswordTable);
+			System.out.println("执行结果2："+insertByUser);
+			System.out.println("执行结果3："+insertByMember);
+			return 1;
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			return 0;
+		}
+		
 //		int i = 1/0;
-		return insertByPasswordTable*insertByUser*insertByMember;
 	}
 	
 	//员工信息插入
+	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.SERIALIZABLE,timeout = 30000)
 	public int insertEmployeeRegist(PasswordTable pawT, Employee emp) {
-		//密码插入
-		pawT.setPwd_regist_data(new Date());
-		int insertByPasswordTable = userManageDao.insertByPasswordTable(pawT);
-		PasswordTable queryByUsernameAndPassword = userManageDao.queryByUsernameAndPassword(pawT.getPwd_username(), pawT.getPwd_password());
-		
-		//信息插入
-		Department queryDepByPower = this.queryDepByPower(Integer.toString(pawT.getPwd_power()));
-		emp.setEmp_pasid(queryByUsernameAndPassword.getPwd_id());
-		emp.setEmp_depid(queryDepByPower.getDep_id());
-		int insertByEmployee = userManageDao.insertByEmployee(emp);
-		
-		return insertByPasswordTable*insertByEmployee;
+		try {
+			//密码插入
+			pawT.setPwd_regist_data(new Date());
+			int insertByPasswordTable = userManageDao.insertByPasswordTable(pawT);
+			PasswordTable queryByUsernameAndPassword = userManageDao.queryByUsernameAndPassword(pawT.getPwd_username(), pawT.getPwd_password());
+			
+			//信息插入
+			Department queryDepByPower = this.queryDepByPower(Integer.toString(pawT.getPwd_power()));
+			emp.setEmp_pasid(queryByUsernameAndPassword.getPwd_id());
+			emp.setEmp_depid(queryDepByPower.getDep_id());
+			int insertByEmployee = userManageDao.insertByEmployee(emp);
+			return 1;
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			return 0;
+		}
 	}
 	
 	//登录

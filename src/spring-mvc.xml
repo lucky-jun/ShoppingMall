@@ -17,14 +17,22 @@
     http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd">
       
       
+      <!-- SpringMVC 主要就是来管理网站的跳转逻辑
+     	       所以在配置扫描的包时，使用 use-default-filters 属性，并设置为 false，即不使用默认的 Filter 进行扫描。
+       -->
+      
+      
 <!-- 1、配置controller扫描 -->
-   <context:component-scan base-package="com.j">
+   <context:component-scan base-package="com.j" use-default-filters="false">
      <!-- 只扫描Controller层 -->
      <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
    </context:component-scan>
    
 <!-- 2、注解驱动 -->
    <mvc:annotation-driven></mvc:annotation-driven>
+   
+   
+   
    
 <!-- 3、配置jsp视图解析器 -->
 <!-- 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"> 

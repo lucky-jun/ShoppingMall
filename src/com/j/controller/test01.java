@@ -42,10 +42,24 @@ public class test01 {
 		
 		
 		
-		int i = -2147483647;
+		int i = 2147483647;
 		System.out.println(i);
 		System.out.println();
 		
+		long milliSecond =2147483647000L;
+		Date date = new Date();
+		Date date2 = new Date();
+		date.setTime(milliSecond);
+		
+		System.out.println("时间戳："+date2.getTime());
+		System.out.println("时间戳："+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date));
+		
+		
+
+        long milliSecond1 = 1551798059000L;
+        Date date1 = new Date();
+        date.setTime(milliSecond);
+        System.out.println(new SimpleDateFormat().format(date1));
 		
 		
 	}

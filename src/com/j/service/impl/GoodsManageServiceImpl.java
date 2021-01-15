@@ -9,6 +9,10 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.alibaba.fastjson.JSONArray;
 import com.j.dao.GoodsManageDao;
@@ -86,13 +90,15 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 		}
 	}
 //	加入我的订单
+	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.SERIALIZABLE,timeout = 30000)
 	@Override
 	public Map insertGoToMyOrder(Map map2) {
-
 		double sumprice = 0;
 		String goodsInf = "";
 		System.out.println(map2);
 		List list = (List) map2.get("goods");
+		//创建goodsid接收商品id
+	    List<Integer> goodsid = new ArrayList<Integer>();
 		for(int i =0 ;i<list.size();i++) {
 			System.out.println(list);
 		    JSONArray jsonArray = new JSONArray(list);  
@@ -121,23 +127,36 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 		    System.out.println(doubleValue);
 		    sumprice+=doubleValue;
 		    System.out.println(sumprice);
-		    
+		    goodsid.add(id);
 		    goodsInf+=id+"-"+number+",";
 		}
+		System.out.println("商品ID："+goodsid);
 		String substring = goodsInf.substring(0,goodsInf.length()-1);
 		System.out.println("商品信息："+substring);
 		System.out.println("商品总价："+sumprice);
-		System.out.println("userID1："+map2.get("userId"));
-		System.out.println("userID2："+Integer.valueOf((String) map2.get("userId")));
-		System.out.println("userID3："+Integer.valueOf((String) map2.get("userId")).intValue());
+//		System.out.println("userID1："+map2.get("userId"));
+//		System.out.println("userID2："+Integer.valueOf((String) map2.get("userId")));
+//		System.out.println("userID3："+Integer.valueOf((String) map2.get("userId")).intValue());
 		
 		MyOrder myOrder = new MyOrder(Integer.valueOf((String) map2.get("userId")).intValue(), substring, sumprice, "订单未支付", "等待支付", new Date());
-		
-		int insertGoToMyOrder = goodsManageDao.insertGoToMyOrder(myOrder);
-		int queryMyOrderNewByUserID = goodsManageDao.queryMyOrderNewByUserID(myOrder.getOrd_userid());
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("MyOrderId", queryMyOrderNewByUserID);
-		map.put("flag", insertGoToMyOrder>0);
+		try {
+			goodsManageDao.insertGoToMyOrder(myOrder);
+//			goodsManageDao.deleteToMyCartByList(map)
+//			int a = 1/0;
+			int queryMyOrderNewByUserID = goodsManageDao.queryMyOrderNewByUserID(myOrder.getOrd_userid());
+			map.put("MyOrderId", queryMyOrderNewByUserID);
+			map.put("flag", true);
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			map.put("flag", false);
+		}
+//		int insertGoToMyOrder = goodsManageDao.insertGoToMyOrder(myOrder);
+//		int queryMyOrderNewByUserID = goodsManageDao.queryMyOrderNewByUserID(myOrder.getOrd_userid());
+//		Map<String,Object> map = new HashMap<String, Object>();
+//		map.put("MyOrderId", queryMyOrderNewByUserID);
+//		map.put("flag", insertGoToMyOrder>0);
+		System.out.println("service:"+map);
 		return map;
 	}
 //	修改支付状态
@@ -159,7 +178,6 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 		List<LookOrder> listorder = new ArrayList<LookOrder>();
 		Map<String,Object> map2 = new HashMap<String, Object>();
 		
-//		for(MyOrder list: queryMyOrderByUserID) {
 			for(int i =0;i<queryMyOrderByUserID.size();i++) {
 				String[] split = queryMyOrderByUserID.get(i).getOrd_goodsinf().split(",");
 				System.out.println("订单编号:"+queryMyOrderByUserID.get(i).getOrd_id());
@@ -171,7 +189,6 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 				List<Integer> listOrderBynumber = new ArrayList<Integer>();
 				//将订单获取到的商品ID和商品数量分离
 				for(int a=0;a<split.length;a++) {
-//					System.out.println("split[i]:"+split[a]);
 					String[] split2 = split[a].split("-");
 					listOrderById.add(Integer.valueOf(split2[0]));
 					listOrderBynumber.add(Integer.valueOf(split2[1]));
@@ -193,64 +210,13 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 					queryGoodsLookOrderByListID.get(a).setOrd_id(queryMyOrderByUserID.get(i).getOrd_id());
 					System.out.println(queryGoodsLookOrderByListID.get(a));
 				}
-				//ord_sumprice=2.5, ord_paystate=订单未支付, ord_orderstate=等待支付, ord_createtime=Tue Jan 05 20:17:59 CST 2021
 				//以订单号添加入map集合
 				map2.put(String.valueOf(queryMyOrderByUserID.get(i).getOrd_id()), queryGoodsLookOrderByListID);
-//				map2.put("ord_sumprice", queryMyOrderByUserID.get(i).getOrd_sumprice());
-//				map2.put("ord_paystate", queryMyOrderByUserID.get(i).getOrd_paystate());
-//				map2.put("ord_orderstate", queryMyOrderByUserID.get(i).getOrd_orderstate());
 				
 				System.out.println("++++++++++++++++:"+map2);
-//				listid.addAll(listOrderById);
-//				listnumber.add(Integer.valueOf(split2[1]));
 			}
-		/*
-		 *  map2:{
-		 *  1=[[goo_id=5, goo_name=优酸乳, goo_stock=100, goo_buying_price=1.0, goo_selling_price=2.5, goo_supid=3, goo_type=奶制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]], 
-		 *  2=[[goo_id=4, goo_name=安德玛X02, goo_stock=50, goo_buying_price=899.0, goo_selling_price=999.0, goo_supid=5, goo_type=进口服装, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]], 
-		 *  3=[[goo_id=6, goo_name=百草味酸奶, goo_stock=100, goo_buying_price=2.5, goo_selling_price=4.0, goo_supid=3, goo_type=奶制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]], 
-		 *  4=[[goo_id=4, goo_name=安德玛X02, goo_stock=50, goo_buying_price=899.0, goo_selling_price=999.0, goo_supid=5, goo_type=进口服装, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]], 
-		 *  15=[[goo_id=5, goo_name=优酸乳, goo_stock=100, goo_buying_price=1.0, goo_selling_price=2.5, goo_supid=3, goo_type=奶制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]], 
-		 *  5=[[goo_id=4, goo_name=安德玛X02, goo_stock=50, goo_buying_price=899.0, goo_selling_price=999.0, goo_supid=5, goo_type=进口服装, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]], 
-		 *  16=[
-		 *   [goo_id=2, goo_name=红萝卜, goo_stock=100, goo_buying_price=1.0, goo_selling_price=2.0, goo_supid=2, goo_type=果蔬, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null],
-		 *   [goo_id=5, goo_name=优酸乳, goo_stock=100, goo_buying_price=1.0, goo_selling_price=2.5, goo_supid=3, goo_type=奶制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null],
-		 *   [goo_id=6, goo_name=百草味酸奶, goo_stock=100, goo_buying_price=2.5, goo_selling_price=4.0, goo_supid=3, goo_type=奶制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null],
-		 *   [goo_id=8, goo_name=哈哈腊鸭, goo_stock=100, goo_buying_price=39.9, goo_selling_price=69.9, goo_supid=1, goo_type=肉制品, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_text=null, goo_details=null]]}  
-		 *    
-		 *    [
-		 *    LookOrder[goo_id=2, goo_name=红萝卜, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_selling_price=2.0, number=0.0, sumprice=0.0],
-		 *    LookOrder[goo_id=5, goo_name=优酸乳, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_selling_price=2.5, number=0.0, sumprice=0.0],
-		 *    LookOrder[goo_id=6, goo_name=百草味酸奶, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_selling_price=4.0, number=0.0, sumprice=0.0],
-		 *    LookOrder[goo_id=8, goo_name=哈哈腊鸭, goo_image=//img10.360buyimg.com/seckillcms/s250x250_jfs/t1/149610/13/17555/80183/5fd06d77Ef92040f1/757f488b6a26215a.jpg, goo_selling_price=69.9, number=0.0, sumprice=0.0]]
-		 *    
-		 *    
-		 *    
-		 *    
-		 *    
-*/
 			
-			System.out.println("map2:"+map2);
-//			System.out.println(listid);
-//			System.out.println(listnumber);
-//			List<Goods> queryGoodsByListID = goodsManageDao.queryGoodsByListID(listid);
-//			System.out.println(queryGoodsByListID);
-//			for(int i=0;i<queryGoodsByListID.size();i++) {
-//				LookOrder lookOrder = new LookOrder();
-//				System.out.println("-----:"+queryGoodsByListID.get(i).getGoo_id());
-//				System.out.println("-----:"+queryGoodsByListID.get(i).getGoo_name());
-//				lookOrder.setGoo_id(queryGoodsByListID.get(i).getGoo_id());
-//				lookOrder.setGoo_name(queryGoodsByListID.get(i).getGoo_name());
-//				lookOrder.setGoo_image(queryGoodsByListID.get(i).getGoo_image());
-//				lookOrder.setGoo_selling_price(queryGoodsByListID.get(i).getGoo_selling_price());
-//				lookOrder.setNumber(listnumber.get(i));
-//				lookOrder.setSumprice(queryGoodsByListID.get(i).getGoo_selling_price()*listnumber.get(i));
-//				listorder.add(lookOrder);
-//				System.out.println("listorder:"+listorder);
-//			}
-//			System.out.println();
-//			System.out.println("listorder:"+listorder);
-//		}
+		System.out.println("map2:"+map2);
 		Map<String,Object> map = new HashMap<String, Object>();
 		if(queryMyOrderByUserID.isEmpty()) {
 			map.put("flag", false);
@@ -262,19 +228,14 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 	}
 	//用户取消订单
 	//未开启事务
+	//传播行为propagation（有事务加入事务，没有则创建事务）---隔离级别isolation（SERIALIZABLE：最高级别，能防止脏读，重复读，幻读）---超时timeout（单位毫秒）---回滚rollbackFor(遇到该错误回滚)---不回滚noRollbackFor(遇到该错误不回滚)
+	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.SERIALIZABLE,timeout = 30000)
+//	@Transactional(rollbackFor = {ArithmeticException.class})
 	@Override
 	public Map<String, Object> deleteToMyOrderByUser(Map<String, Object> map) {
 		System.out.println("进入service");
-//		{MyOrderId=18, UserId=6}
-		System.out.println(map);
 		//获取订单信息
 		List<MyOrder> queryMyOrderByOrdid = goodsManageDao.queryMyOrderByOrdid((Integer)map.get("MyOrderId"));
-		System.out.println(queryMyOrderByOrdid);
-		/*
-		 * [ord_id=18, ord_userid=6, ord_goodsinf=8-2,2-2,5-1, ord_sumprice=146.3,
-		 * ord_paystate=订单未支付, ord_orderstate=等待支付, ord_createtime=Tue Jan 12 11:05:03
-		 * CST 2021]
-		 */
 		//将获取插入历史订单表
 		orderHistory.setHis_goodsinf(queryMyOrderByOrdid.get(0).getOrd_goodsinf());
 		orderHistory.setHis_starttime(queryMyOrderByOrdid.get(0).getOrd_createtime());
@@ -282,25 +243,34 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 		orderHistory.setHis_sumprice(queryMyOrderByOrdid.get(0).getOrd_sumprice());
 		orderHistory.setHis_userid(queryMyOrderByOrdid.get(0).getOrd_userid());
 		orderHistory.setHis_orderstate((String)map.get("state"));
-		/*
-		 * OrderHistory [his_id=0, his_userid=6, his_goodsinf=8-2,2-2,5-1,
-		 * his_sumprice=146.3, ord_orderstate=订单已取消, his_starttime=Tue Jan 12 11:05:03
-		 * CST 2021, his_stoptime=Tue Jan 12 12:07:49 CST 2021]
-		 */
-		System.out.println(orderHistory);
-		int insertGoToOrderHistory = goodsManageDao.insertGoToOrderHistory(orderHistory);
-		//删除我的订单
 		Map<String,Object> map3 = new HashMap<String, Object>();
-		if(insertGoToOrderHistory>0) {
-//			#{ord_id} and ord_userid=#{ord_userid}
+		try {
+			//插入历史订单
+			goodsManageDao.insertGoToOrderHistory(orderHistory);
 			Map<String,Object> map2 = new HashMap<String, Object>();
 			map2.put("ord_id", map.get("MyOrderId"));
 			map2.put("ord_userid", Integer.valueOf((String)map.get("UserId")));
+			System.out.println("哈哈哈哈");
+			//删除我的订单
+//			int i=1/0;
 			int deleteToMyOrder = goodsManageDao.deleteToMyOrder(map2);
 			map3.put("flag", deleteToMyOrder>0);
-		}else {
+		} catch (Exception e) {
+			//try-catch手动回滚
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			map3.put("flag", false);
 		}
+		
+//		if(insertGoToOrderHistory>0) {
+//			Map<String,Object> map2 = new HashMap<String, Object>();
+//			map2.put("ord_id", map.get("MyOrderId"));
+//			map2.put("ord_userid", Integer.valueOf((String)map.get("UserId")));
+//			int deleteToMyOrder = goodsManageDao.deleteToMyOrder(map2);
+//			map3.put("flag", deleteToMyOrder>0);
+//		}else {
+//			map3.put("flag", false);
+//		}
+		System.out.println("事务管理map3："+map3);
 		return map3;
 	}
 
