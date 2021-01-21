@@ -23,7 +23,7 @@ import com.j.pojo.User;
 import com.j.service.UserManageService;
 import com.j.util.DateFormat;
 
-import javafx.print.PageOrientation;
+//import javafx.print.PageOrientation;
 
 
 @Service
@@ -40,6 +40,7 @@ public class UserManageServiceImpl implements UserManageService{
 
 	//ÓÃ»§×¢²á
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.SERIALIZABLE,timeout = 30000)
 	public int insertUserRegist(PasswordTable pawT, User user) {
 		System.out.println("------------------------service:start");
 		System.out.println(pawT.getPwd_username());
