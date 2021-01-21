@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -16,12 +19,15 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.alibaba.fastjson.JSONArray;
 import com.j.dao.GoodsManageDao;
+import com.j.dao.UserManageDao;
+import com.j.pojo.EmpOrder;
 import com.j.pojo.Goods;
 import com.j.pojo.LookOrder;
 import com.j.pojo.MyCart;
 import com.j.pojo.MyOrder;
 import com.j.pojo.OrderHistory;
 import com.j.pojo.ToCart;
+import com.j.pojo.User;
 import com.j.service.GoodsManageService;
 import com.j.util.DateFormat;
 @Service
@@ -30,7 +36,140 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 	@Autowired
 	private GoodsManageDao goodsManageDao;
 	@Autowired
+	private UserManageDao userManageDao;
+	@Autowired
 	private OrderHistory orderHistory;
+	@Autowired
+	private EmpOrder empOrder;
+	
+	
+	/*
+	 * {
+	 * 22=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 23=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 24=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 25=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 26=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 29=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 30=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 11=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 12=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 34=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 13=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 14=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 36=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 15=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 16=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 19=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 1=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 2=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 3=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 4=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 6=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 7=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 8=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 9=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021], 
+	 * 
+	 * 21=EmpOrder [ord_id=36, ord_username=user10,
+	 * ord_useradd=null, ord_goodsid=1, ord_goodsname=上海青, ord_goodsnumber=1,
+	 * ord_sumprice=2.0, ord_paystate=等待发货, ord_orderstate=null, ord_createtime=Wed
+	 * Jan 20 20:32:53 CST 2021]}
+	 */
 	
 	
 //功能
@@ -272,6 +411,82 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 //		}
 		System.out.println("事务管理map3："+map3);
 		return map3;
+	}
+	//员工订单查询
+	@Override
+	public Map<String, Object> queryMyOrderAll() {
+		List<MyOrder> order = goodsManageDao.queryMyOrderAll();
+		
+		System.out.println("==================================");
+		System.out.println(order);
+//		Map<String,Object> map2 = new HashMap<String, Object>();
+		Map<String, List<EmpOrder>> map3 = new LinkedMap();
+		List<EmpOrder> list = new ArrayList<EmpOrder>();
+		for(int i =0;i<order.size();i++) {
+
+			System.out.println("===========:"+list);
+			//获取商品信息并分割
+			String[] split = order.get(i).getOrd_goodsinf().split(",");
+			//获取用户ID
+			int ord_userid = order.get(i).getOrd_userid();
+			
+			System.out.println("split:"+split.toString());
+			
+			//商品IDList
+			List<Integer> listOrderById = new ArrayList<Integer>();
+			//相应订单商品Number
+			List<Integer> listOrderBynumber = new ArrayList<Integer>();
+			//将订单获取到的商品ID和商品数量分离
+			for(int a=0;a<split.length;a++) {
+				String[] split2 = split[a].split("-");
+				listOrderById.add(Integer.valueOf(split2[0]));
+				listOrderBynumber.add(Integer.valueOf(split2[1]));
+			}
+			System.out.println(listOrderById);
+			//查询语句，获取订单中商品的相关信息
+			List<LookOrder> goods = goodsManageDao.queryGoodsLookOrderByListID(listOrderById);
+			//获取用户信息
+			User user = userManageDao.queryUserById(ord_userid);
+			
+			//将对应信息赋给实体类
+			for(int a=0;a<goods.size();a++) {
+				//设置订单ID
+				empOrder.setOrd_id(order.get(i).getOrd_id());
+				empOrder.setOrd_username(user.getUser_name());
+				empOrder.setOrd_useradd(user.getUser_address());
+				empOrder.setOrd_goodsid(goods.get(a).getGoo_id());
+				empOrder.setOrd_goodsname(goods.get(a).getGoo_name());
+				empOrder.setOrd_goodsnumber(listOrderBynumber.get(a));
+				empOrder.setOrd_sumprice(order.get(i).getOrd_sumprice());
+				empOrder.setOrd_paystate(order.get(i).getOrd_orderstate());
+				empOrder.setOrd_createtime(order.get(i).getOrd_createtime());
+				System.out.println("--------:"+empOrder);
+				list.add(empOrder);
+			}
+			System.out.println("-------------------");
+//			System.out.println(list);
+//			map3.put(String.valueOf(order.get(i).getOrd_id()), list);
+			//以订单号添加入map集合
+//			map2.put(String.valueOf(order.get(i).getOrd_id()), list);
+		}
+		System.out.println(list);
+		
+//		System.out.println("++++++++++++++++:"+map2);
+		
+		
+		
+		
+		
+		Map<String,Object> map = new HashMap<String, Object>();
+//		map.put("data", queryMyOrderAll);
+		System.out.println(map.size());
+		if(map.size()>0) {
+			map.put("flag", true);
+		}else {
+			map.put("flag", false);
+		}
+		System.out.println("员工查询："+map);
+		return map;
 	}
 
 }

@@ -113,6 +113,10 @@
 	 <select id="queryUseFuByName" parameterType="String" resultType="com.j.pojo.User">
 	 	select * from User where emp_name like #{user_name}
 	 </select>
+	 	<!-- 按userID查询 -->
+	 <select id="queryUserById" parameterType="int" resultType="com.j.pojo.User">
+	 	select * from User where user_id = #{user_id}
+	 </select>
 	 
 	 	<!-- 密码ID查询用户信息 -->
 	 <select id="queryUserByPwdId" parameterType="int" resultType="com.j.pojo.User">

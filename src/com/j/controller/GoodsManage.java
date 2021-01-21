@@ -207,4 +207,13 @@ public class GoodsManage {
 		System.out.println("deleteToMyOrderByUser:"+deleteToMyOrderByUser);
 		return JSON.toJSONString(deleteToMyOrderByUser);
 	}
+	
+	//员工订单查询
+	
+	@ResponseBody
+	@RequestMapping(value = "/queryMyOrderAll.do" , method = RequestMethod.POST)
+	public String queryMyOrderAll() {
+		System.out.println("1111111111111111");
+		return JSON.toJSONString(goodsManageService.queryMyOrderAll());
+	}
 }

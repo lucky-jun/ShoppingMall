@@ -39,6 +39,8 @@ public interface GoodsManageService {
 		//点击收货
 	
 	//员工功能
+		//查询订单
+	public Map<String, Object> queryMyOrderAll();
 		//......
 
 }

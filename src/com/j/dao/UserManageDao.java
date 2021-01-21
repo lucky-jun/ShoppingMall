@@ -47,6 +47,9 @@ public interface UserManageDao {
 	public List<Employee> queryEmpFuByName(@Param("emp_name")String emp_name);
 	public List<User> queryUseFuByName(@Param("user_name")String user_name);
 	
+	//按userID查询
+	public User queryUserById(@Param("user_id")int user_id);
+	
 	//密码ID查询用户信息
 	public User queryUserByPwdId(@Param("user_pasid")int id);
 	//部门信息查询
