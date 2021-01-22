@@ -112,14 +112,20 @@
 		</foreach>
 		</trim>
 	</select>
-		<!-- 批量ID查询：查看订单使用 ,传入List类型-->
+		<!-- 批量ID查询：查看订单使用 ,传入List类型,加入后面的order By可按加入的id顺序进行顺序输出-->
 	<select id="queryGoodsLookOrderByListID" parameterType="java.util.List" resultType="com.j.pojo.LookOrder">
 		select * from Goods where goo_id in
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-		<foreach collection="list" item="id" index="index" separator=",">
-			#{id}
-		</foreach>
+			<foreach collection="list" item="id" index="index" separator=",">
+				#{id}
+			</foreach>
 		</trim>
+			order by field(
+		  		goo_id,
+		  		<foreach collection="list" separator="," item="id">
+		  			#{id}
+		  		</foreach>
+		  	)
 	</select>
 	<!-- 购物车查询:MyCart -->
 		<!-- 用户购物车查询，int 传入用户ID -->
@@ -158,6 +164,10 @@
 			<!-- 订单编号查询订单 -->
 	<select id="queryMyOrderByOrdid" parameterType="int" resultType="com.j.pojo.MyOrder">
 		select * from MyOrder where ord_id=#{ord_id}
+	</select>
+			<!-- 精确搜索用户名订单 -->
+	<select id="queryOrderByUserName" parameterType="int" resultType="com.j.pojo.MyOrder">
+		select * from MyOrder where ord_userid=#{ord_userid}
 	</select>
 	<!-- 历史订单查询:OrderHistory -->
 		<!-- 用户查询 -->

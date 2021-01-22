@@ -213,7 +213,17 @@ public class GoodsManage {
 	@ResponseBody
 	@RequestMapping(value = "/queryMyOrderAll.do" , method = RequestMethod.POST)
 	public String queryMyOrderAll() {
-		System.out.println("1111111111111111");
-		return JSON.toJSONString(goodsManageService.queryMyOrderAll());
+		System.out.println("Controller界面");
+		Map<String, Object> queryMyOrderAll = goodsManageService.queryMyOrderAll();
+		System.out.println(queryMyOrderAll);
+		return JSON.toJSONString(queryMyOrderAll);
+	}
+	@ResponseBody
+	@RequestMapping(value = "/queryOrderByUserName.do" , method = RequestMethod.POST)
+	public String queryOrderByUserName(@RequestBody Map user) {
+		System.out.println("Controller界面");
+		Map<String, Object> queryOrderByUserName = goodsManageService.queryOrderByUserName((String) user.get("ord_username"));
+		System.out.println(queryOrderByUserName);
+		return JSON.toJSONString(queryOrderByUserName);
 	}
 }

@@ -126,7 +126,12 @@ public class UserManageServiceImpl implements UserManageService{
 		System.out.println("123123123:"+queryByUsernameAndPassword.getPwd_login_data());
 		System.out.println("123123123:"+pw.getPwd_login_data());
 		System.out.println(updatePWTByUsername);
-		map.put("lastTime",dateFormat.DateUtiltoString(pw.getPwd_login_data()));
+		System.out.println("时间："+pw.getPwd_login_data());
+		if(pw.getPwd_login_data()==null||pw.getPwd_login_data().equals("")) {
+			map.put("lastTime","这是您的第一次登陆，欢迎您的到来！");
+		}else {
+			map.put("lastTime",dateFormat.DateUtiltoString(pw.getPwd_login_data()));
+		}
 		if(pw.getPwd_power()==10) {
 			User queryByUser = userManageDao.queryByUser(pw.getPwd_id());
 			System.out.println("pw.getPwd_id():"+pw.getPwd_id());

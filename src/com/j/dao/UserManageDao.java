@@ -47,6 +47,9 @@ public interface UserManageDao {
 	public List<Employee> queryEmpFuByName(@Param("emp_name")String emp_name);
 	public List<User> queryUseFuByName(@Param("user_name")String user_name);
 	
+	//按名字精确查询
+	public User queryUseJingQueByName(@Param("user_name")String user_name);
+	
 	//按userID查询
 	public User queryUserById(@Param("user_id")int user_id);
 	

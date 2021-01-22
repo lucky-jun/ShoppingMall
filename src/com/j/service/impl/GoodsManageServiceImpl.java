@@ -292,10 +292,10 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 		
 		System.out.println("==================================");
 		System.out.println(order);
-		Map<String,Object> map2 = new HashMap<String, Object>();
+		LinkedMap map2 = new LinkedMap();
 //		Map<String, List<EmpOrder>> map3 = new LinkedMap();
+		LinkedList<EmpOrder> list = new LinkedList<EmpOrder>();
 		for(int i =0;i<order.size();i++) {
-			List<EmpOrder> list = new ArrayList<EmpOrder>();
 			System.out.println("===========:"+list);
 			//获取商品信息并分割
 			String[] split = order.get(i).getOrd_goodsinf().split(",");
@@ -306,7 +306,7 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 			System.out.println("split:"+split.toString());
 			
 			//商品IDList
-			List<Integer> listOrderById = new ArrayList<Integer>();
+			List<Integer> listOrderById = new LinkedList<Integer>();
 			//相应订单商品Number
 			List<Integer> listOrderBynumber = new ArrayList<Integer>();
 			//将订单获取到的商品ID和商品数量分离
@@ -324,9 +324,10 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 			//获取用户信息
 			User user = userManageDao.queryUserById(ord_userid);
 			Map map4 = new LinkedMap();
-			EmpOrder empOrder2 = new EmpOrder();
 			//将对应信息赋给实体类
 			for(int a=0;a<goods.size();a++) {
+				EmpOrder empOrder2 = new EmpOrder();
+				System.out.println("商品名："+goods.get(a).getGoo_name());
 				//设置订单ID
 				empOrder2.setOrd_id(order.get(i).getOrd_id());
 				empOrder2.setOrd_username(user.getUser_name());
@@ -337,33 +338,106 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 				empOrder2.setOrd_sumprice(order.get(i).getOrd_sumprice());
 				empOrder2.setOrd_paystate(order.get(i).getOrd_orderstate());
 				empOrder2.setOrd_createtime(order.get(i).getOrd_createtime());
-				System.out.println("--------:"+empOrder2);
-				
-//				map4.put(String.valueOf(goods.get(a).getGoo_id()), empOrder);
-				
-//				map2.put(String.valueOf(order.get(i).getOrd_id()), empOrder);
-//				System.out.println(map2);
+//				System.out.println("--------:"+empOrder2);
 				list.add(empOrder2);
-//				System.out.println("=============:+++++++++++:"+list);
+//				System.out.println("yyyyyyyyy:"+list);
 			}
-//			map2.put(String.valueOf(order.get(i).getOrd_id()), map4);
-//			System.out.println("-------------------");
-//			System.out.println(list);
-//			map3.put(String.valueOf(order.get(i).getOrd_id()), list);
 			//以订单号添加入map集合
-			map2.put(String.valueOf(order.get(i).getOrd_id()), list);
+//			map2.put(String.valueOf(order.get(i).getOrd_id()), list);
 		}
-//		System.out.println(map2);
-		
 		System.out.println("++++++++++++++++:"+map2);
-		
-		
-		
+		System.out.println("++++++++List:"+list);
 		
 		
 		Map<String,Object> map = new HashMap<String, Object>();
-//		map.put("data", queryMyOrderAll);
+//		map.put("data", map2);
+		map.put("data", list);
 		System.out.println(map.size());
+		if(map.size()>0) {
+			map.put("flag", true);
+		}else {
+			map.put("flag", false);
+		}
+		System.out.println("员工查询："+map);
+		return map;
+	}
+	//按用户姓名查询订单
+	@Override
+	public Map<String, Object> queryOrderByUserName(String user_name) {
+		System.out.println(user_name);
+		User user = userManageDao.queryUseJingQueByName(user_name);
+		System.out.println("判断用户："+user);
+		System.out.println("判断用户："+user==null);
+		System.out.println("判断用户："+user.equals(null));
+		Map<String,Object> map = new HashMap<String, Object>();
+		if(user!=null) {
+			List<MyOrder> order = goodsManageDao.queryOrderByUserName(user.getUser_id());
+			
+			System.out.println("==================================");
+			System.out.println(order);
+			LinkedMap map2 = new LinkedMap();
+//			Map<String, List<EmpOrder>> map3 = new LinkedMap();
+			LinkedList<EmpOrder> list = new LinkedList<EmpOrder>();
+			for(int i =0;i<order.size();i++) {
+				System.out.println("===========:"+list);
+				//获取商品信息并分割
+				String[] split = order.get(i).getOrd_goodsinf().split(",");
+				//获取用户ID
+				int ord_userid = order.get(i).getOrd_userid();
+				
+				System.out.println("split:"+split);
+				System.out.println("split:"+split.toString());
+				
+				//商品IDList
+				List<Integer> listOrderById = new LinkedList<Integer>();
+				//相应订单商品Number
+				List<Integer> listOrderBynumber = new ArrayList<Integer>();
+				//将订单获取到的商品ID和商品数量分离
+				for(int a=0;a<split.length;a++) {
+					String[] split2 = split[a].split("-");
+					listOrderById.add(Integer.valueOf(split2[0]));
+					listOrderBynumber.add(Integer.valueOf(split2[1]));
+				}
+				System.out.println("22222222222222222222222");
+				System.out.println(listOrderById);
+//				new LinkedList<>()
+				//查询语句，获取订单中商品的相关信息
+				List<LookOrder> goods = goodsManageDao.queryGoodsLookOrderByListID(listOrderById);
+				System.out.println("goods:--------:"+goods);
+//				获取用户信息
+//				User user = userManageDao.queryUserById(ord_userid);
+				Map map4 = new LinkedMap();
+				//将对应信息赋给实体类
+				for(int a=0;a<goods.size();a++) {
+					EmpOrder empOrder2 = new EmpOrder();
+					System.out.println("商品名："+goods.get(a).getGoo_name());
+					//设置订单ID
+					empOrder2.setOrd_id(order.get(i).getOrd_id());
+					empOrder2.setOrd_username(user.getUser_name());
+					empOrder2.setOrd_useradd(user.getUser_address());
+					empOrder2.setOrd_goodsid(goods.get(a).getGoo_id());
+					empOrder2.setOrd_goodsname(goods.get(a).getGoo_name());
+					empOrder2.setOrd_goodsnumber(listOrderBynumber.get(a));
+					empOrder2.setOrd_sumprice(order.get(i).getOrd_sumprice());
+					empOrder2.setOrd_paystate(order.get(i).getOrd_orderstate());
+					empOrder2.setOrd_createtime(order.get(i).getOrd_createtime());
+//					System.out.println("--------:"+empOrder2);
+					list.add(empOrder2);
+//					System.out.println("yyyyyyyyy:"+list);
+				}
+				//以订单号添加入map集合
+//				map2.put(String.valueOf(order.get(i).getOrd_id()), list);
+			}
+			System.out.println("++++++++++++++++:"+map2);
+			System.out.println("++++++++List:"+list);
+			
+			
+//			Map<String,Object> map = new HashMap<String, Object>();
+//			map.put("data", map2);
+			map.put("data", list);
+			System.out.println(map.size());
+		}
+
 		if(map.size()>0) {
 			map.put("flag", true);
 		}else {

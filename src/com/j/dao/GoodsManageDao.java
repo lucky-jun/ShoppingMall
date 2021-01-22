@@ -1,5 +1,6 @@
 package com.j.dao;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +64,9 @@ public interface GoodsManageDao {
 	public List<MyOrder> queryMyOrderByOrderstate(@Param("ord_orderstate")int ord_orderstate);
 			// 订单编号查询订单 
 	public List<MyOrder> queryMyOrderByOrdid(@Param("ord_id")int ord_id);
+			//订单用户ID查询
+	public List<MyOrder> queryOrderByUserName(@Param("ord_userid")int ord_userid);
+	
 	// 历史订单查询:OrderHistory
 		// 用户查询 
 	public List<OrderHistory> queryOrderHistoryByUserID(@Param("his_userid")int his_userid);

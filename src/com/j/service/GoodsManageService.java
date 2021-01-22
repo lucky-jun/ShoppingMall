@@ -41,6 +41,8 @@ public interface GoodsManageService {
 	//员工功能
 		//查询订单
 	public Map<String, Object> queryMyOrderAll();
+			//查询用户姓名订单
+	public Map<String,Object> queryOrderByUserName(String user_name);
 		//......
 
 }
