@@ -71,6 +71,9 @@
 		<delete id="deleteToMyOrder" parameterType="Map">
 			delete from MyOrder where ord_id=#{ord_id} and ord_userid=#{ord_userid}
 		</delete>
+		<delete id="deleteToMyOrderByEmp" parameterType="Map">
+			delete from MyOrder where ord_id=#{ord_id}
+		</delete>
 
 <!-- 查 -->
 	<!-- 厂商查询 -->
@@ -195,5 +198,18 @@
 	<!--  修改购物车中已有商品的数量-->
 	<update id="updataMyCartToNumberinOne" parameterType="Map">
 		update MyCart set car_goonum=#{car_goonum} where car_userid=#{car_userid} and car_gooid=#{car_gooid}
+	</update>
+	<!-- 以订单ID修改订单的信息 -->
+	<update id="updateOrder" parameterType="com.j.pojo.MyOrder">
+		update MyOrder 
+		<set>
+			<if test="ord_userid != null">ord_userid = #{ord_userid},</if>
+			<if test="ord_goodsinf != null">ord_goodsinf = #{ord_goodsinf},</if>
+			<if test="ord_sumprice != null">ord_sumprice = #{ord_sumprice},</if>
+			<if test="ord_paystate != null">ord_paystate = #{ord_paystate},</if>
+			<if test="ord_orderstate != null">ord_orderstate = #{ord_orderstate},</if>
+			<if test="ord_createtime != null">ord_createtime = #{ord_createtime}</if>
+		</set>
+		where ord_id = #{ord_id}
 	</update>
 </mapper>

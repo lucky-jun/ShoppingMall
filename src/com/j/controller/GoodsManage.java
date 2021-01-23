@@ -26,6 +26,7 @@ import com.j.pojo.Goods;
 import com.j.pojo.MyCart;
 import com.j.pojo.MyOrder;
 import com.j.pojo.ToCart;
+import com.j.service.GoodsManageService;
 import com.j.service.impl.GoodsManageServiceImpl;
 
 @Controller
@@ -35,7 +36,7 @@ import com.j.service.impl.GoodsManageServiceImpl;
 public class GoodsManage {
 
 	@Autowired
-	private GoodsManageServiceImpl goodsManageService;
+	private GoodsManageService goodsManageService;
 	private MyCart mycart;
 	
 //	首页获取商品展示
@@ -218,12 +219,41 @@ public class GoodsManage {
 		System.out.println(queryMyOrderAll);
 		return JSON.toJSONString(queryMyOrderAll);
 	}
+	//按名字搜索
 	@ResponseBody
 	@RequestMapping(value = "/queryOrderByUserName.do" , method = RequestMethod.POST)
 	public String queryOrderByUserName(@RequestBody Map user) {
 		System.out.println("Controller界面");
 		Map<String, Object> queryOrderByUserName = goodsManageService.queryOrderByUserName((String) user.get("ord_username"));
-		System.out.println(queryOrderByUserName);
+//		System.out.println(queryOrderByUserName);
 		return JSON.toJSONString(queryOrderByUserName);
 	}
+	
+	//发货
+	@ResponseBody
+	@RequestMapping(value = "/updateOrderToDelivering.do" , method = RequestMethod.POST)
+	public String updateOrderToDelivering(@RequestBody MyOrder myOrder) {
+		System.out.println("Controller界面");
+		Map<String, Object> map = goodsManageService.updateOrderToDelivering(myOrder);
+//		System.out.println(queryOrderByUserName);
+		return JSON.toJSONString(map);
+	}
+	//取消订单
+	@ResponseBody
+	@RequestMapping(value = "/DeleteOrderToDelivering.do" , method = RequestMethod.POST)
+	public String DeleteOrderToDelivering(@RequestBody Map map) {
+		System.out.println("Controller界面");
+//		System.out.println(queryOrderByUserName);
+		return JSON.toJSONString(goodsManageService.deleteToMyOrderByEmp(map));
+	}
+	//修改订单信息
+	@ResponseBody
+	@RequestMapping(value = "/updateOrderToAddress.do" , method = RequestMethod.POST)
+	public String updataOrderToAddress(@RequestBody Map map) {
+		System.out.println("Controller界面");
+//		System.out.println(queryOrderByUserName);
+		return JSON.toJSONString(goodsManageService.deleteToMyOrderByEmp(map));
+	}
+	
+	
 }

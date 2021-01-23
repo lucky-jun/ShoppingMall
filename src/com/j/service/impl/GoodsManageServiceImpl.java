@@ -102,7 +102,7 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 		}
 	}
 //	加入我的订单
-	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.SERIALIZABLE,timeout = 30000)
+	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.SERIALIZABLE,timeout = 60000)
 	@Override
 	public Map insertGoToMyOrder(Map map2) {
 		double sumprice = 0;
@@ -239,9 +239,8 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 		return map;
 	}
 	//用户取消订单
-	//未开启事务
 	//传播行为propagation（有事务加入事务，没有则创建事务）---隔离级别isolation（SERIALIZABLE：最高级别，能防止脏读，重复读，幻读）---超时timeout（单位毫秒）---回滚rollbackFor(遇到该错误回滚)---不回滚noRollbackFor(遇到该错误不回滚)
-	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.SERIALIZABLE,timeout = 30000)
+	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.SERIALIZABLE,timeout = 60000)
 //	@Transactional(rollbackFor = {ArithmeticException.class})
 	@Override
 	public Map<String, Object> deleteToMyOrderByUser(Map<String, Object> map) {
@@ -365,14 +364,14 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 	@Override
 	public Map<String, Object> queryOrderByUserName(String user_name) {
 		System.out.println(user_name);
-		User user = userManageDao.queryUseJingQueByName(user_name);
-		System.out.println("判断用户："+user);
-		System.out.println("判断用户："+user==null);
-		System.out.println("判断用户："+user.equals(null));
+		LinkedList<User> userlist = userManageDao.queryUseJingQueByName(user_name);
+		System.out.println("判断用户："+userlist);
+//		System.out.println("判断用户："+user==null);
+//		System.out.println("判断用户："+user.equals(null));
 		Map<String,Object> map = new HashMap<String, Object>();
-		if(user!=null) {
-			List<MyOrder> order = goodsManageDao.queryOrderByUserName(user.getUser_id());
-			
+		if(!userlist.isEmpty()) {
+			List<MyOrder> order = goodsManageDao.queryOrderByUserName(userlist.get(0).getUser_id());
+			//
 			System.out.println("==================================");
 			System.out.println(order);
 			LinkedMap map2 = new LinkedMap();
@@ -413,8 +412,8 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 					System.out.println("商品名："+goods.get(a).getGoo_name());
 					//设置订单ID
 					empOrder2.setOrd_id(order.get(i).getOrd_id());
-					empOrder2.setOrd_username(user.getUser_name());
-					empOrder2.setOrd_useradd(user.getUser_address());
+					empOrder2.setOrd_username(userlist.get(0).getUser_name());
+					empOrder2.setOrd_useradd(userlist.get(0).getUser_address());
 					empOrder2.setOrd_goodsid(goods.get(a).getGoo_id());
 					empOrder2.setOrd_goodsname(goods.get(a).getGoo_name());
 					empOrder2.setOrd_goodsnumber(listOrderBynumber.get(a));
@@ -431,7 +430,6 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 			System.out.println("++++++++++++++++:"+map2);
 			System.out.println("++++++++List:"+list);
 			
-			
 //			Map<String,Object> map = new HashMap<String, Object>();
 //			map.put("data", map2);
 			map.put("data", list);
@@ -445,6 +443,60 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 		}
 		System.out.println("员工查询："+map);
 		return map;
+	}
+	//发货
+	@Override
+	public Map<String, Object> updateOrderToDelivering(MyOrder myOrder) {
+		myOrder.setOrd_orderstate("等待收货");
+		System.out.println("service");
+		System.out.println(myOrder);
+		int updataOrder = goodsManageDao.updateOrder(myOrder);
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("flag", updataOrder);
+		return map;
+	}
+	//员工取消订单
+	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.SERIALIZABLE,timeout = 60000)
+	@Override
+	public Map<String, Object> deleteToMyOrderByEmp(Map map) {
+		List<MyOrder> queryMyOrderByOrdid = goodsManageDao.queryMyOrderByOrdid((int) map.get("ord_id"));
+		
+		
+		orderHistory.setHis_goodsinf(queryMyOrderByOrdid.get(0).getOrd_goodsinf());
+		orderHistory.setHis_starttime(queryMyOrderByOrdid.get(0).getOrd_createtime());
+		orderHistory.setHis_stoptime(new Date());
+		orderHistory.setHis_sumprice(queryMyOrderByOrdid.get(0).getOrd_sumprice());
+		orderHistory.setHis_userid(queryMyOrderByOrdid.get(0).getOrd_userid());
+		orderHistory.setHis_orderstate("已取消");
+		Map<String,Object> map3 = new HashMap<String, Object>();
+		try {
+			//插入历史订单
+			goodsManageDao.insertGoToOrderHistory(orderHistory);
+			Map<String,Object> map2 = new HashMap<String, Object>();
+			map2.put("ord_id", map.get("ord_id"));
+			map2.put("ord_userid", Integer.valueOf((String)map.get("UserId")));
+//			System.out.println("哈哈哈哈");
+//			int i=1/0;
+			//删除我的订单
+			int deleteToMyOrderByEmp = goodsManageDao.deleteToMyOrderByEmp(map);
+			map3.put("flag", deleteToMyOrderByEmp>0);
+		} catch (Exception e) {
+			//try-catch手动回滚
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			map3.put("flag", false);
+		}
+		
+//		if(insertGoToOrderHistory>0) {
+//			Map<String,Object> map2 = new HashMap<String, Object>();
+//			map2.put("ord_id", map.get("MyOrderId"));
+//			map2.put("ord_userid", Integer.valueOf((String)map.get("UserId")));
+//			int deleteToMyOrder = goodsManageDao.deleteToMyOrder(map2);
+//			map3.put("flag", deleteToMyOrder>0);
+//		}else {
+//			map3.put("flag", false);
+//		}
+		System.out.println("事务管理map3："+map3);
+		return map3;
 	}
 
 }

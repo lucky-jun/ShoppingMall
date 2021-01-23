@@ -1,6 +1,7 @@
 package com.j.dao;
 
 import java.sql.Date;
+import java.util.LinkedList;
 //import java.sql.Timestamp;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public interface UserManageDao {
 	public List<User> queryUseFuByName(@Param("user_name")String user_name);
 	
 	//按名字精确查询
-	public User queryUseJingQueByName(@Param("user_name")String user_name);
+	public LinkedList<User> queryUseJingQueByName(@Param("user_name")String user_name);
 	
 	//按userID查询
 	public User queryUserById(@Param("user_id")int user_id);

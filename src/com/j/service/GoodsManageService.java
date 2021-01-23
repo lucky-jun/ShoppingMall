@@ -43,6 +43,10 @@ public interface GoodsManageService {
 	public Map<String, Object> queryMyOrderAll();
 			//查询用户姓名订单
 	public Map<String,Object> queryOrderByUserName(String user_name);
+		//发货
+	public Map<String,Object> updateOrderToDelivering(MyOrder myOrder);
+		//取消订单
+	public Map<String,Object> deleteToMyOrderByEmp(Map map);
 		//......
 
 }

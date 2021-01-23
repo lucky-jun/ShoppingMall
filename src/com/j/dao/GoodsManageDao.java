@@ -30,6 +30,8 @@ public interface GoodsManageDao {
 	public int deleteToMyCartByList(Map<String ,Object> map);
 	//删除商品订单中取消或者点击收货:MyOrder ，以map形式传入我的订单中的订单ID和用户ID
 	public int deleteToMyOrder(Map<String ,Object> map);
+	//员工删除订单
+	public int deleteToMyOrderByEmp(Map<String,Object> map);
 //查
 	// 厂商查询 ：Supplier
 	// 商品查询 :Goods
@@ -78,6 +80,7 @@ public interface GoodsManageDao {
 	public int updateMyCartToNumberByUidGid(Map<String ,Object> map);
 	public int updateMyOrderPayState(@Param("ord_paystate") String ord_paystate,@Param("ord_orderstate") String ord_orderstate,@Param("ord_id") String ord_id);
 	public int updataMyCartToNumberinOne(Map<String ,Object> map);
-	
+	//订单信息修改
+	public int updateOrder(MyOrder myOrder);
 	
 }
