@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 public class OrderHistory {
 	private int his_id;
 	private int his_userid;
+	private String his_deliadd;
 	private String his_goodsinf;
 	private double his_sumprice;
 	private String his_orderstate;
@@ -23,6 +24,12 @@ public class OrderHistory {
 	}
 	public void setHis_userid(int his_userid) {
 		this.his_userid = his_userid;
+	}
+	public String getHis_deliadd() {
+		return his_deliadd;
+	}
+	public void setHis_deliadd(String his_deliadd) {
+		this.his_deliadd = his_deliadd;
 	}
 	public String getHis_goodsinf() {
 		return his_goodsinf;
@@ -56,18 +63,19 @@ public class OrderHistory {
 	}
 	@Override
 	public String toString() {
-		return "OrderHistory [his_id=" + his_id + ", his_userid=" + his_userid + ", his_goodsinf=" + his_goodsinf
-				+ ", his_sumprice=" + his_sumprice + ", his_orderstate=" + his_orderstate + ", his_starttime="
-				+ his_starttime + ", his_stoptime=" + his_stoptime + "]";
+		return "OrderHistory [his_id=" + his_id + ", his_userid=" + his_userid + ", his_deliadd=" + his_deliadd
+				+ ", his_goodsinf=" + his_goodsinf + ", his_sumprice=" + his_sumprice + ", his_orderstate="
+				+ his_orderstate + ", his_starttime=" + his_starttime + ", his_stoptime=" + his_stoptime + "]";
 	}
 	public OrderHistory() {
 		super();
 	}
-	public OrderHistory(int his_id, int his_userid, String his_goodsinf, double his_sumprice, String his_orderstate,
-			Date his_starttime, Date his_stoptime) {
+	public OrderHistory(int his_id, int his_userid, String his_deliadd, String his_goodsinf, double his_sumprice,
+			String his_orderstate, Date his_starttime, Date his_stoptime) {
 		super();
 		this.his_id = his_id;
 		this.his_userid = his_userid;
+		this.his_deliadd = his_deliadd;
 		this.his_goodsinf = his_goodsinf;
 		this.his_sumprice = his_sumprice;
 		this.his_orderstate = his_orderstate;

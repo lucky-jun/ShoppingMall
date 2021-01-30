@@ -203,9 +203,9 @@
 	<update id="updateOrder" parameterType="com.j.pojo.MyOrder">
 		update MyOrder 
 		<set>
-			<if test="ord_userid != null">ord_userid = #{ord_userid},</if>
+			<if test="ord_userid != 0">ord_userid = #{ord_userid},</if>
 			<if test="ord_goodsinf != null">ord_goodsinf = #{ord_goodsinf},</if>
-			<if test="ord_sumprice != null">ord_sumprice = #{ord_sumprice},</if>
+			<if test="ord_sumprice != 0.0">ord_sumprice = #{ord_sumprice},</if>
 			<if test="ord_paystate != null">ord_paystate = #{ord_paystate},</if>
 			<if test="ord_orderstate != null">ord_orderstate = #{ord_orderstate},</if>
 			<if test="ord_createtime != null">ord_createtime = #{ord_createtime}</if>

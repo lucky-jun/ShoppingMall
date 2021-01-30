@@ -43,6 +43,9 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 	@Autowired
 	private EmpOrder empOrder;
 	
+	@Autowired
+	private MyOrder myOrder;
+	
 
 	
 //功能
@@ -107,6 +110,7 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 	public Map insertGoToMyOrder(Map map2) {
 		double sumprice = 0;
 		String goodsInf = "";
+		String deliadd = "service固定地址";
 		System.out.println(map2);
 		List list = (List) map2.get("goods");
 		//创建goodsid接收商品id
@@ -150,7 +154,7 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 //		System.out.println("userID2："+Integer.valueOf((String) map2.get("userId")));
 //		System.out.println("userID3："+Integer.valueOf((String) map2.get("userId")).intValue());
 		
-		MyOrder myOrder = new MyOrder(Integer.valueOf((String) map2.get("userId")).intValue(), substring, sumprice, "订单未支付", "等待支付", new Date());
+		MyOrder myOrder = new MyOrder(Integer.valueOf((String) map2.get("userId")).intValue(),deliadd, substring, sumprice, "订单未支付", "等待支付", new Date());
 		Map<String,Object> map = new HashMap<String, Object>();
 		try {
 			goodsManageDao.insertGoToMyOrder(myOrder);
@@ -247,6 +251,7 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 		System.out.println("进入service");
 		//获取订单信息
 		List<MyOrder> queryMyOrderByOrdid = goodsManageDao.queryMyOrderByOrdid((Integer)map.get("MyOrderId"));
+		System.out.println(queryMyOrderByOrdid);
 		//将获取插入历史订单表
 		orderHistory.setHis_goodsinf(queryMyOrderByOrdid.get(0).getOrd_goodsinf());
 		orderHistory.setHis_starttime(queryMyOrderByOrdid.get(0).getOrd_createtime());
@@ -254,14 +259,20 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 		orderHistory.setHis_sumprice(queryMyOrderByOrdid.get(0).getOrd_sumprice());
 		orderHistory.setHis_userid(queryMyOrderByOrdid.get(0).getOrd_userid());
 		orderHistory.setHis_orderstate((String)map.get("state"));
+		System.out.println(orderHistory);
 		Map<String,Object> map3 = new HashMap<String, Object>();
+		System.out.println("0000000000000");
+//		int insertGoToOrderHistory = goodsManageDao.insertGoToOrderHistory(orderHistory);
 		try {
 			//插入历史订单
-			goodsManageDao.insertGoToOrderHistory(orderHistory);
+			System.out.println("111111111111111");
+			int insertGoToOrderHistory = goodsManageDao.insertGoToOrderHistory(orderHistory);
+			System.out.println(insertGoToOrderHistory);
 			Map<String,Object> map2 = new HashMap<String, Object>();
 			map2.put("ord_id", map.get("MyOrderId"));
 			map2.put("ord_userid", Integer.valueOf((String)map.get("UserId")));
 			System.out.println("哈哈哈哈");
+			System.out.println(map2);
 			//删除我的订单
 //			int i=1/0;
 			int deleteToMyOrder = goodsManageDao.deleteToMyOrder(map2);
@@ -330,12 +341,13 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 				//设置订单ID
 				empOrder2.setOrd_id(order.get(i).getOrd_id());
 				empOrder2.setOrd_username(user.getUser_name());
-				empOrder2.setOrd_useradd(user.getUser_address());
+				empOrder2.setOrd_useradd(order.get(i).getOrd_deliadd());
 				empOrder2.setOrd_goodsid(goods.get(a).getGoo_id());
 				empOrder2.setOrd_goodsname(goods.get(a).getGoo_name());
 				empOrder2.setOrd_goodsnumber(listOrderBynumber.get(a));
 				empOrder2.setOrd_sumprice(order.get(i).getOrd_sumprice());
-				empOrder2.setOrd_paystate(order.get(i).getOrd_orderstate());
+				empOrder2.setOrd_paystate(order.get(i).getOrd_paystate());
+				empOrder2.setOrd_orderstate(order.get(i).getOrd_orderstate());
 				empOrder2.setOrd_createtime(order.get(i).getOrd_createtime());
 //				System.out.println("--------:"+empOrder2);
 				list.add(empOrder2);
@@ -446,13 +458,15 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 	}
 	//发货
 	@Override
-	public Map<String, Object> updateOrderToDelivering(MyOrder myOrder) {
+	public Map<String, Object> updateOrderToDelivering(Map map2) {
+		myOrder.setOrd_id((int) map2.get("orderId"));
 		myOrder.setOrd_orderstate("等待收货");
 		System.out.println("service");
 		System.out.println(myOrder);
 		int updataOrder = goodsManageDao.updateOrder(myOrder);
+		System.out.println("发货按钮："+updataOrder);
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("flag", updataOrder);
+		map.put("flag", updataOrder>0);
 		return map;
 	}
 	//员工取消订单

@@ -232,9 +232,9 @@ public class GoodsManage {
 	//发货
 	@ResponseBody
 	@RequestMapping(value = "/updateOrderToDelivering.do" , method = RequestMethod.POST)
-	public String updateOrderToDelivering(@RequestBody MyOrder myOrder) {
+	public String updateOrderToDelivering(@RequestBody Map map2) {
 		System.out.println("Controller界面");
-		Map<String, Object> map = goodsManageService.updateOrderToDelivering(myOrder);
+		Map<String, Object> map = goodsManageService.updateOrderToDelivering(map2);
 //		System.out.println(queryOrderByUserName);
 		return JSON.toJSONString(map);
 	}
@@ -252,6 +252,7 @@ public class GoodsManage {
 	public String updataOrderToAddress(@RequestBody Map map) {
 		System.out.println("Controller界面");
 //		System.out.println(queryOrderByUserName);
+//		return JSON.toJSONString(goodsManageService.updataOrderToAddress(map));
 		return JSON.toJSONString(goodsManageService.deleteToMyOrderByEmp(map));
 	}
 	
