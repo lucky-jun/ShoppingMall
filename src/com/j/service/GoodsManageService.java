@@ -23,6 +23,8 @@ public interface GoodsManageService {
 	public List<Goods> queryGoodsByID(List<Integer> ids);
 		//添加购物车
 	public boolean insertGoToMyCart(MyCart mycart);
+		//从购物车删除商品
+	public Map<String,Object> deleteToMyCartByList(Map map2);
 		//浏览购物车
 	public List<ToCart> queryMyCartByUserAll(int userid);
 		//购物车结算

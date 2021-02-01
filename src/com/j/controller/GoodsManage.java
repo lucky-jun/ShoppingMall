@@ -110,6 +110,18 @@ public class GoodsManage {
 		System.out.println(map);
 		return JSON.toJSONString(map);
 	}
+	
+	
+//	用户从购物车中删除已加入的商品
+	@ResponseBody
+	@RequestMapping(value="/deleteToMyCart.do",method=RequestMethod.POST)
+	public String deleteToMyCartByList(@RequestBody Map<String,Integer> map2) {
+		Map<String, Object> map = goodsManageService.deleteToMyCartByList(map2);
+		return JSON.toJSONString(map);
+	}
+	
+	
+	
 //	加入我的订单
 	@ResponseBody
 	@RequestMapping(value="/insertToMyOrder.do",method=RequestMethod.POST)

@@ -512,5 +512,29 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 		System.out.println("事务管理map3："+map3);
 		return map3;
 	}
+	//用户从购物车中删除已加入的商品
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED,isolation = Isolation.SERIALIZABLE,timeout=60000)
+	public Map<String, Object> deleteToMyCartByList(Map map2) {
+//		map2.get("ord_id");
+//		map2.get("user_id");
+		System.out.println(map2);
+		List<Integer> list = new ArrayList<Integer>();
+		list.add((int)map2.get("car_gooid"));
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("car_gooid", list);
+		map.put("car_userid", map2.get("user_id"));
+		System.out.println(map);
+		Map<String,Object> res = new HashMap<String, Object>();
+//		try {
+			int deleteToMyCartByList = goodsManageDao.deleteToMyCartByList(map);
+			res.put("flag", deleteToMyCartByList>0);
+//		} catch (Exception e) {
+//			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//			res.put("flag", false);
+//		}
+		System.out.println(res);
+		return res;
+	}
 
 }

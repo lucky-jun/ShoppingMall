@@ -57,8 +57,8 @@
 		</delete> -->
 		<!-- 购物车批量删除,购买或者移除:以map传入商品ID的list和用户ID -->
 		<delete id="deleteToMyCartByList" parameterType="Map">
-			delete table from MyCart where car_id in
-			<foreach collection="gooid" index="index" item="id" open="(" separator="," close=")">
+			delete from MyCart where car_gooid in
+			<foreach collection="car_gooid" index="index" item="id" open="(" separator="," close=")">
 				#{id}
 			</foreach>
 			and car_userid=#{car_userid}
