@@ -46,7 +46,11 @@
 		insert into OrderHistory(his_userid,his_goodsinf,his_sumprice,his_starttime,his_stoptime,his_orderstate) 
 		values(#{his_userid},#{his_goodsinf},#{his_sumprice},#{his_starttime},#{his_stoptime},#{his_orderstate})
 	</insert>
-
+	<!-- 添加商品到Favorite -->
+	<insert id="insertToFavorite" parameterType="Map">
+		insert into Favorite(fav_userid,fav_gooid) 
+		values(#{fav_userid},#{fav_gooid})
+	</insert>
 <!-- 删 -->
 	<!-- 删除购物车中已下单或者点击删除购物车商品的信息：MyCart ,以List形式传入-->
 <!-- 		<delete id="deleteToMyCart" parameterType="java.util.List" >
@@ -73,6 +77,17 @@
 		</delete>
 		<delete id="deleteToMyOrderByEmp" parameterType="Map">
 			delete from MyOrder where ord_id=#{ord_id}
+		</delete>
+		
+		
+		<!-- 收藏夹删除商品 -->
+			<!-- 用户删除商品，传入list -->
+		<delete id="deleteMyFavorite" parameterType="Map">
+			delete from Favorite where fav_gooid in 
+			<foreach collection="fav_gooid" index="index" item="id" open="(" separator="," close=")">
+				#{id}
+			</foreach>
+			and fav_userid=#{fav_userid}
 		</delete>
 
 <!-- 查 -->
@@ -107,13 +122,19 @@
 		select * from Goods where goo_id=#{goo_id}
 	</select>
 		<!-- 批量ID查询：购买商品等使用 ,传入List类型-->
-	<select id="queryGoodsByListID" parameterType="java.util.List" resultType="com.j.pojo.Goods">
+	<select id="queryGoodsByListID" parameterType="java.util.LinkedList" resultType="com.j.pojo.Goods">
 		select * from Goods where goo_id in
 		<trim prefix="(" suffix=")" suffixOverrides=",">
-		<foreach collection="list" item="id" index="index" separator=",">
-			#{id}
-		</foreach>
+			<foreach collection="list" item="id" index="index" separator=",">
+				#{id}
+			</foreach>
 		</trim>
+		order by field(
+	  		goo_id,
+	  		<foreach collection="list" separator="," item="id">
+	  			#{id}
+	  		</foreach>
+	  	)
 	</select>
 		<!-- 批量ID查询：查看订单使用 ,传入List类型,加入后面的order By可按加入的id顺序进行顺序输出-->
 	<select id="queryGoodsLookOrderByListID" parameterType="java.util.List" resultType="com.j.pojo.LookOrder">
@@ -180,6 +201,15 @@
 		<!-- 员工查询 -->
 	<select id="queryOrderHistoryAll" resultType="com.j.pojo.OrderHistory">
 		select * from OrderHistory
+	</select>
+	<!-- 收藏夹查询 -->
+		<!-- 用户查询个数（加入收藏夹） -->
+	<select id="queryFavoriteByGooid" parameterType="Map" resultType="int">
+		select count(*) from Favorite where fav_gooid=#{fav_gooid} and fav_userid=#{fav_userid}
+	</select>
+		<!-- 用户查询所有 -->
+	<select id="queryFavoriteByUserAll" parameterType="Map" resultType="java.lang.Integer">
+		select fav_gooid from Favorite where fav_userid=#{fav_userid}
 	</select>
 <!-- 改 -->
 	<!-- 用户购物车增加购买数量:MyCart -->

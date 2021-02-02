@@ -10,6 +10,9 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -117,6 +120,30 @@ public class GoodsManage {
 	@RequestMapping(value="/deleteToMyCart.do",method=RequestMethod.POST)
 	public String deleteToMyCartByList(@RequestBody Map<String,Integer> map2) {
 		Map<String, Object> map = goodsManageService.deleteToMyCartByList(map2);
+		return JSON.toJSONString(map);
+	}
+	
+	
+	
+//	用户从购物车中加入收藏夹
+	@ResponseBody
+	@RequestMapping(value="/insertToFavorite.do",method=RequestMethod.POST)
+	public String insertToFavorite(@RequestBody Map<String,Integer> map2) {
+		Map<String, Object> map = goodsManageService.insertToFavorite(map2);
+		return JSON.toJSONString(map);
+	}
+//	用户查看收藏夹
+	@ResponseBody
+	@RequestMapping(value="/queryFavoriteByUserAll.do",method=RequestMethod.POST)
+	public String queryFavoriteByUserAll(@RequestBody Map<String,Integer> map2) {
+		Map<String, Object> map = goodsManageService.queryFavoriteByUserAll(map2);
+		return JSON.toJSONString(map);
+	}
+//	用户删除收藏夹商品
+	@ResponseBody
+	@RequestMapping(value="/deleteMyFavorite.do",method=RequestMethod.POST)
+	public String deleteMyFavorite(@RequestBody Map<String, Object> map2) {
+		Map<String, Object> map = goodsManageService.deleteMyFavorite(map2);
 		return JSON.toJSONString(map);
 	}
 	
@@ -266,6 +293,14 @@ public class GoodsManage {
 //		System.out.println(queryOrderByUserName);
 //		return JSON.toJSONString(goodsManageService.updataOrderToAddress(map));
 		return JSON.toJSONString(goodsManageService.deleteToMyOrderByEmp(map));
+	}
+	
+	//商品详情添加收藏夹
+	@ResponseBody
+	@RequestMapping(value = "/insertToFavoriteIndetail.do" , method = RequestMethod.POST)
+	public String insertToFavoriteIndetail(@RequestBody Map map) {
+		System.out.println("Controller界面");
+		return JSON.toJSONString(goodsManageService.insertToFavoriteIndetail(map));
 	}
 	
 	

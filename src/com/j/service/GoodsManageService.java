@@ -1,5 +1,6 @@
 package com.j.service;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,11 +21,15 @@ public interface GoodsManageService {
 		//浏览商品详情
 	public Goods queryGoodsByID(int goo_id);
 		//直接商品详情界面点击购买\购物车结算
-	public List<Goods> queryGoodsByID(List<Integer> ids);
+	public LinkedList<Goods> queryGoodsByID(LinkedList<Integer> ids);
 		//添加购物车
 	public boolean insertGoToMyCart(MyCart mycart);
 		//从购物车删除商品
 	public Map<String,Object> deleteToMyCartByList(Map map2);
+		//从购物车加入收藏夹
+	public Map<String,Object> insertToFavorite(Map map2);
+		//从商品详情加入收藏夹
+	public Map<String,Object> insertToFavoriteIndetail(Map map2);
 		//浏览购物车
 	public List<ToCart> queryMyCartByUserAll(int userid);
 		//购物车结算
@@ -39,6 +44,11 @@ public interface GoodsManageService {
 		//取消订单
 	public Map<String,Object> deleteToMyOrderByUser(Map<String,Object> map);
 		//点击收货
+	
+		//浏览收藏夹
+	public Map<String,Object> queryFavoriteByUserAll(Map<String,Integer> map);
+		//删除收藏夹商品
+	public Map<String,Object> deleteMyFavorite(Map<String,Object> map2);
 	
 	//员工功能
 		//查询订单

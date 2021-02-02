@@ -24,6 +24,8 @@ public interface GoodsManageDao {
 	public int insertGoToMyOrder(MyOrder myOrder);
 	//添加商品到OrderHistory 
 	public int insertGoToOrderHistory(OrderHistory orderHistory);
+	//添加商品到Favorite 
+	public int insertToFavorite(Map<String ,Object> map);
 	
 //删
 	//购物车批量删除,购买或者移除:以map传入商品ID的list和用户ID
@@ -32,6 +34,10 @@ public interface GoodsManageDao {
 	public int deleteToMyOrder(Map<String ,Object> map);
 	//员工删除订单
 	public int deleteToMyOrderByEmp(Map<String,Object> map);
+	
+	//用户删除收藏夹商品
+	public int deleteMyFavorite(Map<String ,Object> map);
+	
 //查
 	// 厂商查询 ：Supplier
 	// 商品查询 :Goods
@@ -46,8 +52,9 @@ public interface GoodsManageDao {
 		//ID查询  yes
 	public Goods queryGoodsByID(@Param("goo_id")int goo_id);
 		//批量ID查询：购买商品等使用 ,传入List类型
-	public List<Goods> queryGoodsByListID(List<Integer> goodsid);
+	public LinkedList<Goods> queryGoodsByListID(LinkedList<Integer> goodsid);
 	public List<LookOrder> queryGoodsLookOrderByListID(List<Integer> goodsid);
+	public LinkedList<LookOrder> queryGoodsByMapListID(Map<String , Object> map);
 	// 购物车查询:MyCart
 		// 用户购物车查询，int 传入用户ID
 	public List<ToCart> queryMyCartByUserAll(@Param("car_userid")int car_userid);
@@ -74,6 +81,15 @@ public interface GoodsManageDao {
 	public List<OrderHistory> queryOrderHistoryByUserID(@Param("his_userid")int his_userid);
 		// 员工查询 
 	public List<OrderHistory> queryOrderHistoryAll();
+	
+	// 收藏夹查询
+		//用户查询个数（是否含有同一商品）
+	public int queryFavoriteByGooid(Map<String,Object> map);
+		//用户查询所有
+	public LinkedList<Integer> queryFavoriteByUserAll(Map<String,Integer> map);
+	
+	
+	
 //改
 	// 用户购物车增加购买数量:MyCart
 		// 使用Map传值

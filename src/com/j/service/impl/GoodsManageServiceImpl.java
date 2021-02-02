@@ -67,7 +67,7 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 	}
 		//直接商品详情界面点击购买\购物车结算
 	@Override
-	public List<Goods> queryGoodsByID(List<Integer> ids) {
+	public LinkedList<Goods> queryGoodsByID(LinkedList<Integer> ids) {
 		
 		return goodsManageDao.queryGoodsByListID(ids);
 	}
@@ -526,14 +526,123 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 		map.put("car_userid", map2.get("user_id"));
 		System.out.println(map);
 		Map<String,Object> res = new HashMap<String, Object>();
-//		try {
+		try {
 			int deleteToMyCartByList = goodsManageDao.deleteToMyCartByList(map);
 			res.put("flag", deleteToMyCartByList>0);
-//		} catch (Exception e) {
-//			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-//			res.put("flag", false);
-//		}
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			res.put("flag", false);
+		}
 		System.out.println(res);
+		return res;
+	}
+	//从购物车加入收藏夹
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED,isolation=Isolation.SERIALIZABLE,timeout=60000)
+	public Map<String, Object> insertToFavorite(Map map2) {
+		System.out.println(map2);//{fav_gooid=2, fav_userid=1}
+		//查询是否含有该ID商品
+		Goods queryGoodsByID = goodsManageDao.queryGoodsByID((int) map2.get("fav_gooid"));
+		System.out.println(queryGoodsByID);
+		System.out.println(queryGoodsByID!=null);
+		Map<String,Object> res = new HashMap<String, Object>();
+		if(queryGoodsByID!=null) {
+			List<Integer> list = new ArrayList<Integer>();
+			list.add((int)map2.get("fav_gooid"));
+			Map<String,Object> map = new HashMap<String, Object>();
+			map.put("car_gooid", list);
+			map.put("car_userid", map2.get("fav_userid"));
+			System.out.println(map);
+			try {
+				//查询收藏夹是否已含有相同商品
+				int queryFavoriteByGooid = goodsManageDao.queryFavoriteByGooid(map2);
+				System.out.println("查询到的个数："+queryFavoriteByGooid);
+				if(queryFavoriteByGooid>0) {
+					//删除购物车
+					int deleteToMyCartByList = goodsManageDao.deleteToMyCartByList(map);
+					res.put("flag", true);
+					res.put("data", "已存在");
+				}else {				
+					//插入收藏夹
+					int insertToFavorite = goodsManageDao.insertToFavorite(map2);
+					//删除购物车
+					int deleteToMyCartByList = goodsManageDao.deleteToMyCartByList(map);
+					res.put("flag", true);
+					res.put("data", "未存在");
+				}
+			} catch (Exception e) {
+				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+				res.put("flag", false);
+			}
+		}
+		return res;
+	}
+	//浏览收藏夹
+	@Override
+	public Map<String, Object> queryFavoriteByUserAll(Map<String, Integer> map) {
+		System.out.println(map);
+		LinkedList<Integer> linkedList = goodsManageDao.queryFavoriteByUserAll(map);
+		LinkedList<Goods> queryGoodsByListID = goodsManageDao.queryGoodsByListID(linkedList);
+		Map<String,Object> map2 = new HashMap<String, Object>();
+		map2.put("data", queryGoodsByListID);
+		return map2;
+	}
+	//用户删除收藏夹商品
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED,isolation=Isolation.SERIALIZABLE,timeout=60000)
+	public Map<String, Object> deleteMyFavorite(Map<String, Object> map2) {
+		System.out.println(map2);//{fav_gooid=2, fav_userid=1}
+		Map<String,Object> res = new HashMap<String, Object>();
+		List<Integer> list = new ArrayList<Integer>();
+		list.add((int)map2.get("fav_gooid"));
+		map2.put("fav_gooid", list);
+		System.out.println(map2);
+		try {
+			int deleteMyFavorite = goodsManageDao.deleteMyFavorite(map2);
+			res.put("flag", true);
+			System.out.println(deleteMyFavorite);
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			res.put("flag", false);
+		}
+		return res;
+	}
+	//从商品详情加入收藏夹
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED,isolation=Isolation.SERIALIZABLE,timeout=60000)
+	public Map<String, Object> insertToFavoriteIndetail(Map map2) {
+		System.out.println(map2);//{fav_gooid=2, fav_userid=1}{fav_gooid=3, fav_userid=1}
+		//查询是否含有该ID商品
+		Goods queryGoodsByID = goodsManageDao.queryGoodsByID((int) map2.get("fav_gooid"));
+		System.out.println(queryGoodsByID);
+//		System.out.println(queryGoodsByID!=null);
+		Map<String,Object> res = new HashMap<String, Object>();
+		if(queryGoodsByID!=null) {
+			List<Integer> list = new ArrayList<Integer>();
+			list.add((int)map2.get("fav_gooid"));
+			Map<String,Object> map = new HashMap<String, Object>();
+			map.put("car_gooid", list);
+			map.put("car_userid", map2.get("fav_userid"));
+//			System.out.println(map);
+			try {
+//				//查询收藏夹是否已含有相同商品
+				int queryFavoriteByGooid = goodsManageDao.queryFavoriteByGooid(map2);
+				System.out.println("查询到的个数："+queryFavoriteByGooid);
+				if(queryFavoriteByGooid==0) {			
+//					//插入收藏夹
+					int insertToFavorite = goodsManageDao.insertToFavorite(map2);
+					System.out.println(insertToFavorite);
+					res.put("flag", true);
+					res.put("data", "未存在");
+				}else {
+					res.put("flag", true);
+					res.put("data", "已存在");
+				}
+			} catch (Exception e) {
+				TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+				res.put("flag", false);
+			}
+		}
 		return res;
 	}
 
