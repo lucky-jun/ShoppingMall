@@ -104,13 +104,24 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 			return updataMyCartToNumberinOne>0;
 		}
 	}
+	
+	/*
+	 * {goods=[{goo_buying_price=7000, goo_id=2,
+	 * goo_image=//img13.360buyimg.com/n1/s450x450_jfs/t1/133141/39/19600/94797/
+	 * 5fd33063Eaa6bb4fc/4da9462bf0252ecb.jpg, goo_name=Apple iPhone 11 (A2223)
+	 * 128GB 紫色, goo_selling_price=7000, goo_stock=100, goo_supid=2, goo_type=电子产品,
+	 * number=1, sump=7000}], userId=6}
+	 */
+	
 //	加入我的订单
 	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.SERIALIZABLE,timeout = 60000)
 	@Override
 	public Map insertGoToMyOrder(Map map2) {
+		System.out.println("666666666666666:"+map2);
+		System.out.println("666666666666666:");
 		double sumprice = 0;
 		String goodsInf = "";
-		String deliadd = "service固定地址";
+		String deliadd = (String)map2.get("deliadd");
 		System.out.println(map2);
 		List list = (List) map2.get("goods");
 		//创建goodsid接收商品id

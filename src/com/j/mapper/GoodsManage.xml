@@ -38,8 +38,8 @@
 	</insert>
 	<!-- 添加商品到MyOrder -->
 	<insert id="insertGoToMyOrder" parameterType="com.j.pojo.MyOrder">
-		insert into MyOrder(ord_userid,ord_goodsinf,ord_sumprice,ord_paystate,ord_orderstate,ord_createtime) 
-		values(#{ord_userid},#{ord_goodsinf},#{ord_sumprice},#{ord_paystate},#{ord_orderstate},#{ord_createtime})
+		insert into MyOrder(ord_userid,ord_deliadd,ord_goodsinf,ord_sumprice,ord_paystate,ord_orderstate,ord_createtime) 
+		values(#{ord_userid},#{ord_deliadd},#{ord_goodsinf},#{ord_sumprice},#{ord_paystate},#{ord_orderstate},#{ord_createtime})
 	</insert>
 	<!-- 添加商品到OrderHistory -->
 	<insert id="insertGoToOrderHistory" parameterType="com.j.pojo.OrderHistory">
@@ -172,6 +172,11 @@
 	</select>
 		<!-- 获取最新订单 -->
 	<select id="queryMyOrderNewByUserID" parameterType="int" resultType="int">
+		<!-- select * from MyOrder where ord_userid=#{ord_userid} order by ord_id desc -->
+		select max(ord_id) from MyOrder where ord_userid=#{ord_userid}
+	</select>	
+		<!-- 获取历史订单 -->
+	<select id="queryToHistoryOrderAllByUser" parameterType="int" resultType="int">
 		<!-- select * from MyOrder where ord_userid=#{ord_userid} order by ord_id desc -->
 		select max(ord_id) from MyOrder where ord_userid=#{ord_userid}
 	</select>	

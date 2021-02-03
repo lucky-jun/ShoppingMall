@@ -302,6 +302,13 @@ public class GoodsManage {
 		System.out.println("Controller界面");
 		return JSON.toJSONString(goodsManageService.insertToFavoriteIndetail(map));
 	}
+	//用户查看历史订单
+	@ResponseBody
+	@RequestMapping(value = "/queryToHistoryOrderAllByUser.do" , method = RequestMethod.POST)
+	public String queryToHistoryOrderAllByUser(@RequestBody Map map) {
+		System.out.println("Controller界面");
+		return JSON.toJSONString(goodsManageService.queryToHistoryOrderAllByUser(map));
+	}
 	
 	
 }
