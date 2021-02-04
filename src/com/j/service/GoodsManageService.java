@@ -45,6 +45,9 @@ public interface GoodsManageService {
 	public Map<String,Object> deleteToMyOrderByUser(Map<String,Object> map);
 		//点击收货
 	
+		//历史订单查询
+	public Map<String , Object> queryOrderHistoryByUserID(Map<String,Object> map2);
+	
 		//浏览收藏夹
 	public Map<String,Object> queryFavoriteByUserAll(Map<String,Integer> map);
 		//删除收藏夹商品
@@ -59,6 +62,9 @@ public interface GoodsManageService {
 	public Map<String,Object> updateOrderToDelivering(Map map2);
 		//取消订单
 	public Map<String,Object> deleteToMyOrderByEmp(Map map);
+		//修改订单信息
+	public Map<String,Object> updataOrderToAddress(Map map2);
+	
 		//......
 
 }

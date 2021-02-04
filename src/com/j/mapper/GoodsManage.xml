@@ -178,7 +178,7 @@
 		<!-- 获取历史订单 -->
 	<select id="queryToHistoryOrderAllByUser" parameterType="int" resultType="int">
 		<!-- select * from MyOrder where ord_userid=#{ord_userid} order by ord_id desc -->
-		select max(ord_id) from MyOrder where ord_userid=#{ord_userid}
+		select * from orderhistory where his_userid=#{his_userid}
 	</select>	
 	
 		<!-- 员工订单查询 -->
@@ -239,6 +239,7 @@
 		update MyOrder 
 		<set>
 			<if test="ord_userid != 0">ord_userid = #{ord_userid},</if>
+			<if test="ord_deliadd != null">ord_deliadd = #{ord_deliadd},</if>
 			<if test="ord_goodsinf != null">ord_goodsinf = #{ord_goodsinf},</if>
 			<if test="ord_sumprice != 0.0">ord_sumprice = #{ord_sumprice},</if>
 			<if test="ord_paystate != null">ord_paystate = #{ord_paystate},</if>

@@ -436,12 +436,13 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 					//设置订单ID
 					empOrder2.setOrd_id(order.get(i).getOrd_id());
 					empOrder2.setOrd_username(userlist.get(0).getUser_name());
-					empOrder2.setOrd_useradd(userlist.get(0).getUser_address());
+					empOrder2.setOrd_useradd(order.get(i).getOrd_deliadd());
 					empOrder2.setOrd_goodsid(goods.get(a).getGoo_id());
 					empOrder2.setOrd_goodsname(goods.get(a).getGoo_name());
 					empOrder2.setOrd_goodsnumber(listOrderBynumber.get(a));
 					empOrder2.setOrd_sumprice(order.get(i).getOrd_sumprice());
-					empOrder2.setOrd_paystate(order.get(i).getOrd_orderstate());
+					empOrder2.setOrd_paystate(order.get(i).getOrd_paystate());
+					empOrder2.setOrd_orderstate(order.get(i).getOrd_orderstate());
 					empOrder2.setOrd_createtime(order.get(i).getOrd_createtime());
 //					System.out.println("--------:"+empOrder2);
 					list.add(empOrder2);
@@ -484,6 +485,7 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 	@Transactional(propagation = Propagation.REQUIRED,isolation = Isolation.SERIALIZABLE,timeout = 60000)
 	@Override
 	public Map<String, Object> deleteToMyOrderByEmp(Map map) {
+		System.out.println("=====================:"+map);
 		List<MyOrder> queryMyOrderByOrdid = goodsManageDao.queryMyOrderByOrdid((int) map.get("ord_id"));
 		
 		
@@ -494,22 +496,22 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 		orderHistory.setHis_userid(queryMyOrderByOrdid.get(0).getOrd_userid());
 		orderHistory.setHis_orderstate("已取消");
 		Map<String,Object> map3 = new HashMap<String, Object>();
-		try {
+//		try {
 			//插入历史订单
 			goodsManageDao.insertGoToOrderHistory(orderHistory);
-			Map<String,Object> map2 = new HashMap<String, Object>();
-			map2.put("ord_id", map.get("ord_id"));
-			map2.put("ord_userid", Integer.valueOf((String)map.get("UserId")));
+//			Map<String,Object> map2 = new HashMap<String, Object>();
+//			map2.put("ord_id", map.get("ord_id"));
+//			map2.put("ord_userid", Integer.valueOf((String)map.get("UserId")));
 //			System.out.println("哈哈哈哈");
 //			int i=1/0;
 			//删除我的订单
 			int deleteToMyOrderByEmp = goodsManageDao.deleteToMyOrderByEmp(map);
 			map3.put("flag", deleteToMyOrderByEmp>0);
-		} catch (Exception e) {
+//		} catch (Exception e) {
 			//try-catch手动回滚
-			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-			map3.put("flag", false);
-		}
+//			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//			map3.put("flag", false);
+//		}
 		
 //		if(insertGoToOrderHistory>0) {
 //			Map<String,Object> map2 = new HashMap<String, Object>();
@@ -655,6 +657,111 @@ public class GoodsManageServiceImpl implements GoodsManageService {
 			}
 		}
 		return res;
+	}
+	//历史订单查询
+	@Override
+	public Map<String, Object> queryOrderHistoryByUserID(Map<String, Object> request) {
+		System.out.println("历史订单查询"+request);
+		List<OrderHistory> queryOrderHistoryByUserID = goodsManageDao.queryOrderHistoryByUserID(Integer.valueOf((String)request.get("userId")) );
+		/*
+		 * [OrderHistory 
+		 * 
+		 * [his_id=34, his_userid=6, his_deliadd=null,
+		 * his_goodsinf=4-2,1-3, his_sumprice=2004.0, his_orderstate=已收货,
+		 * his_starttime=Tue Jan 12 00:54:05 CST 2021, his_stoptime=Sat Jan 30 17:33:40
+		 * CST 2021], OrderHistory 
+		 * 
+		 * [his_id=35, his_userid=6, his_deliadd=null,
+		 * his_goodsinf=4-2,1-1,7-1,8-1,6-1, his_sumprice=2103.8, his_orderstate=已收货,
+		 * his_starttime=Tue Jan 12 00:54:45 CST 2021, his_stoptime=Thu Feb 04 09:16:01
+		 * CST 2021], OrderHistory 
+		 * 
+		 * [his_id=36, his_userid=6, his_deliadd=null,
+		 * his_goodsinf=8-2,6-2,7-3, his_sumprice=237.5, his_orderstate=已收货,
+		 * his_starttime=Tue Jan 12 00:53:50 CST 2021, his_stoptime=Thu Feb 04 09:19:56
+		 * CST 2021], OrderHistory 
+		 * 
+		 * [his_id=37, his_userid=6, his_deliadd=null,
+		 * his_goodsinf=1-1,6-2, his_sumprice=10.0, his_orderstate=已收货,
+		 * his_starttime=Tue Jan 12 01:00:17 CST 2021, his_stoptime=Thu Feb 04 09:20:00
+		 * CST 2021], OrderHistory 
+		 * 
+		 * [his_id=38, his_userid=6, his_deliadd=null,
+		 * his_goodsinf=4-1, his_sumprice=999.0, his_orderstate=已收货, his_starttime=Sat
+		 * Jan 30 16:54:55 CST 2021, his_stoptime=Thu Feb 04 09:20:03 CST 2021]]
+		 */
+//		System.out.println(queryOrderHistoryByUserID);
+//		System.out.println(queryOrderHistoryByUserID.size());
+////		System.out.println(queryMyOrderByUserID.size());
+//		
+//		List<Integer> listid = new ArrayList<Integer>();
+//		List<Integer> listnumber = new ArrayList<Integer>();
+//		List<LookOrder> listorder = new ArrayList<LookOrder>();
+//		Map<String,Object> map2 = new HashMap<String, Object>();
+//		
+//			for(int i =0;i<queryOrderHistoryByUserID.size();i++) {
+//				String[] split = queryOrderHistoryByUserID.get(i).getHis_goodsinf().split(",");
+//				System.out.println("订单编号:"+queryOrderHistoryByUserID.get(i).getHis_id());
+//				System.out.println("split:"+split.toString());
+//				System.out.println("split.length:"+split.length);
+//				//订单IDList
+//				List<Integer> listOrderById = new ArrayList<Integer>();
+//				//相应订单商品Number
+//				List<Integer> listOrderBynumber = new ArrayList<Integer>();
+//				//将订单获取到的商品ID和商品数量分离
+//				for(int a=0;a<split.length;a++) {
+//					String[] split2 = split[a].split("-");
+//					listOrderById.add(Integer.valueOf(split2[0]));
+//					listOrderBynumber.add(Integer.valueOf(split2[1]));
+//				}
+//				System.out.println(listOrderById);
+//				//查询语句，获取订单中商品的相关信息
+//				List<LookOrder> queryGoodsLookOrderByListID = goodsManageDao.queryGoodsLookOrderByListID(listOrderById);
+//				System.out.println("-------------------");
+//				System.out.println(queryGoodsLookOrderByListID);
+//				System.out.println(queryGoodsLookOrderByListID.size());
+//				System.out.println(listOrderBynumber);
+//				for(int a=0;a<queryGoodsLookOrderByListID.size();a++) {
+//					//将购买的商品数量写入
+//					queryGoodsLookOrderByListID.get(a).setNumber(listOrderBynumber.get(a));
+//					queryGoodsLookOrderByListID.get(a).setSumprice(listOrderBynumber.get(a)*queryGoodsLookOrderByListID.get(a).getGoo_selling_price());
+//					queryGoodsLookOrderByListID.get(a).setPaystate(queryOrderHistoryByUserID.get(i).getHis_orderstate());
+//					queryGoodsLookOrderByListID.get(a).setOrderstate(queryOrderHistoryByUserID.get(i).getHis_orderstate());
+//					queryGoodsLookOrderByListID.get(a).setCreattime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(queryOrderHistoryByUserID.get(i).getOrd_createtime()));
+//					queryGoodsLookOrderByListID.get(a).setOrd_id(queryMyOrderByUserID.get(i).getOrd_id());
+//					System.out.println(queryGoodsLookOrderByListID.get(a));
+//				}
+//				//以订单号添加入map集合
+//				map2.put(String.valueOf(queryMyOrderByUserID.get(i).getOrd_id()), queryGoodsLookOrderByListID);
+//				
+//				System.out.println("++++++++++++++++:"+map2);
+//			}
+//			
+//		System.out.println("map2:"+map2);
+//		System.out.println(queryOrderHistoryByUserID);
+		return null;
+	}
+	//员工修改订单发货地址信息
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED,isolation=Isolation.SERIALIZABLE,timeout=60000)
+	public Map<String, Object> updataOrderToAddress(Map map2) {
+		System.out.println(map2);
+		myOrder.setOrd_deliadd((String) map2.get("newAddress"));
+		myOrder.setOrd_id((int) map2.get("order_id"));
+		Map<String,Object> map = new HashMap<String , Object>();
+		try {
+			int updateOrder = goodsManageDao.updateOrder(myOrder);
+			System.out.println("修改："+updateOrder);
+			if(updateOrder>0) {
+				map.put("flag", true);
+			}else {
+				map.put("flag", false);
+			}
+		} catch (Exception e) {
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			map.put("flag", false);
+		}
+		return map;
 	}
 
 }

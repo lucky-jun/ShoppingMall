@@ -291,8 +291,8 @@ public class GoodsManage {
 	public String updataOrderToAddress(@RequestBody Map map) {
 		System.out.println("Controller界面");
 //		System.out.println(queryOrderByUserName);
-//		return JSON.toJSONString(goodsManageService.updataOrderToAddress(map));
-		return JSON.toJSONString(goodsManageService.deleteToMyOrderByEmp(map));
+		return JSON.toJSONString(goodsManageService.updataOrderToAddress(map));
+//		return JSON.toJSONString(goodsManageService.deleteToMyOrderByEmp(map));
 	}
 	
 	//商品详情添加收藏夹
@@ -307,7 +307,7 @@ public class GoodsManage {
 	@RequestMapping(value = "/queryToHistoryOrderAllByUser.do" , method = RequestMethod.POST)
 	public String queryToHistoryOrderAllByUser(@RequestBody Map map) {
 		System.out.println("Controller界面");
-		return JSON.toJSONString(goodsManageService.queryToHistoryOrderAllByUser(map));
+		return JSON.toJSONString(goodsManageService.queryOrderHistoryByUserID(map));
 	}
 	
 	
